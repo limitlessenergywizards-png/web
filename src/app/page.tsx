@@ -1,65 +1,138 @@
-import Image from "next/image";
+import { createClient } from "@/utils/supabase/server";
+import {
+  Rocket,
+  Video,
+  CheckCircle2,
+  AlertCircle,
+  PlusCircle,
+  RefreshCcw,
+  Ghost
+} from "lucide-react";
+import Link from "next/link";
+import { KanbanCard } from "./components/KanbanCard";
 
-export default function Home() {
+// Supabase fetching mockup until actual schema exists
+async function getProjects() {
+  const supabase = await createClient();
+  // Here we would normally count or fetch projects from supabase:
+  // const { data } = await supabase.from('projects').select('*');
+
+  // For the UI mockup, we return static demo data:
+  return [
+    { id: 1, title: 'PB-ES_Quarto_20260215', status: 'DRAFT', priority: 'HIGH', updated_at: new Date().toISOString(), owner: { username: 'thierre' } },
+    { id: 2, title: 'PB-ES_Cozinha_20260216', status: 'AUDIO_PROCESSING', priority: 'MEDIUM', updated_at: new Date().toISOString(), owner: { username: 'rob' } },
+    { id: 3, title: 'PB-ES_Varanda_20260217', status: 'EDITING', priority: 'LOW', updated_at: new Date().toISOString(), owner: { username: 'redney' } },
+  ];
+}
+
+export default async function Dashboard() {
+  const projects = await getProjects();
+
+  const draft = projects.filter(p => p.status === 'DRAFT');
+  const audio = projects.filter(p => p.status === 'AUDIO_PROCESSING');
+  const editing = projects.filter(p => p.status === 'EDITING' || p.status === 'AUDIO_READY');
+  const rendering = projects.filter(p => p.status === 'RENDERING');
+  const completed = projects.filter(p => p.status === 'COMPLETED');
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="space-y-6 max-h-screen flex flex-col pt-8">
+      {/* Header Area */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-6 shrink-0">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-white mb-1">
+            Workspace <span className="text-blue-500">ASAVIA</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+          <p className="text-slate-400 text-sm">Acompanhamento da esteira de produção de criativos.</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="flex gap-3">
+          <button className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-2 px-4 rounded-lg border border-slate-700 transition-colors flex items-center gap-2">
+            <RefreshCcw className="w-4 h-4" /> Atualizar
+          </button>
+          <Link href="/novo" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium py-2 px-4 rounded-lg shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2">
+            <PlusCircle className="w-5 h-5" /> Novo Criativo
+          </Link>
         </div>
-      </main>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 px-6 shrink-0">
+        <StatCard title="Em Produção" count={projects.length} icon={<Rocket className="w-5 h-5 text-blue-500" />} color="blue" />
+        <StatCard title="Renderizando" count={rendering.length} icon={<Video className="w-5 h-5 text-purple-500" />} color="purple" />
+        <StatCard title="Concluídos (Semana)" count={completed.length} icon={<CheckCircle2 className="w-5 h-5 text-emerald-500" />} color="emerald" />
+        <StatCard title="Aguardando Ação" count={draft.length} icon={<AlertCircle className="w-5 h-5 text-rose-500" />} color="rose" />
+      </div>
+
+      {/* Kanban Board Container */}
+      <div className="flex gap-4 overflow-x-auto pb-4 pt-2 px-6 snap-x flex-1">
+
+        <KanbanColumn title="Rascunho" count={draft.length} color="slate">
+          {draft.map(p => <KanbanCard key={p.id} project={p} color="slate" />)}
+          {draft.length === 0 && <EmptyState />}
+        </KanbanColumn>
+
+        <KanbanColumn title="Áudios & IA" count={audio.length} color="yellow" dotAnimation="animate-pulse">
+          {audio.map(p => <KanbanCard key={p.id} project={p} color="yellow" />)}
+          {audio.length === 0 && <EmptyState />}
+        </KanbanColumn>
+
+        <KanbanColumn title="Cockpit do Editor" count={editing.length} color="rose" isCockpit>
+          {editing.map(p => <KanbanCard key={p.id} project={p} color="rose" isCockpit />)}
+          {editing.length === 0 && <EmptyState icon="check" text="Tudo limpo!" />}
+        </KanbanColumn>
+
+        <KanbanColumn title="Renderizando" count={rendering.length} color="purple">
+          {rendering.map(p => <KanbanCard key={p.id} project={p} color="purple" />)}
+          {rendering.length === 0 && <EmptyState />}
+        </KanbanColumn>
+
+        <KanbanColumn title="Concluído (Drive)" count={completed.length} color="emerald">
+          {completed.map(p => <KanbanCard key={p.id} project={p} color="emerald" />)}
+          {completed.length === 0 && <EmptyState />}
+        </KanbanColumn>
+
+      </div>
     </div>
   );
+}
+
+// Inline Components for layout cleanliness
+function StatCard({ title, count, icon, color }: { title: string, count: number, icon: React.ReactNode, color: string }) {
+  return (
+    <div className="bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 p-4 rounded-xl">
+      <div className="flex items-center gap-3 mb-2">
+        <div className={`p-2 bg-${color}-500/10 rounded-lg`}>{icon}</div>
+        <h3 className="text-slate-400 text-sm font-medium">{title}</h3>
+      </div>
+      <p className="text-2xl font-bold text-white">{count}</p>
+    </div>
+  )
+}
+
+function KanbanColumn({ title, count, color, dotAnimation, isCockpit, children }: any) {
+  return (
+    <div className="flex-none w-80 flex flex-col snap-center h-full max-h-full">
+      <div className="flex items-center justify-between mb-3 px-1">
+        <div className="flex items-center gap-2">
+          <div className={`w-2 h-2 rounded-full bg-${color}-500 ${dotAnimation || ''} ${isCockpit ? 'shadow-[0_0_8px_rgba(244,63,94,0.6)]' : ''}`}></div>
+          <h2 className={`font-semibold ${isCockpit ? 'text-white' : 'text-slate-300'}`}>{title}</h2>
+        </div>
+        <span className={`text-xs font-medium py-1 px-2 rounded-md ${isCockpit ? 'bg-rose-500/20 text-rose-400 border border-rose-500/20' : 'bg-slate-800 text-slate-400'}`}>
+          {count}
+        </span>
+      </div>
+      <div className={`flex-1 space-y-3 rounded-xl p-2 overflow-y-auto custom-scrollbar ${isCockpit ? 'bg-slate-800/30 border border-rose-500/20' : 'bg-slate-900/50 border border-slate-800/50'}`}>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function EmptyState({ icon = "ghost", text = "Vazio" }: { icon?: string, text?: string }) {
+  return (
+    <div className="border-2 border-dashed border-slate-800 rounded-lg p-6 text-center text-slate-500 text-sm h-32 flex flex-col items-center justify-center">
+      {icon === "ghost" ? <Ghost className="w-8 h-8 mb-2 opacity-30" /> : <CheckCircle2 className="w-8 h-8 mb-2 opacity-30" />}
+      {text}
+    </div>
+  )
 }
