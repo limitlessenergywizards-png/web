@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import os from 'os';
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import { logger } from '../utils/logger.js';
@@ -36,23 +37,21 @@ export async function uploadAvatar(buffer, fileName) {
     }
 
     const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(storagePath);
-    const publicUrl = urlData.publicUrl;
-
-    logger.info(`Avatar uploaded: ${publicUrl}`, { phase: 'STORAGE_OK' });
-    return { url: publicUrl, path: storagePath };
+    logger.info(`Avatar uploaded: ${urlData.publicUrl}`, { phase: 'STORAGE_OK' });
+    return { url: urlData.publicUrl, path: storagePath };
 }
 
 /**
- * Upload video file to Supabase Storage
- * @param {string} filePath - Local path to video file
+ * Upload video to Supabase Storage (accepts buffer or file path)
+ * @param {Buffer|string} input - Buffer or local file path
  * @param {string} fileName - e.g. 'hook_1_v1.mp4'
  * @returns {{ url: string, path: string }}
  */
-export async function uploadVideo(filePath, fileName) {
+export async function uploadVideo(input, fileName) {
     const storagePath = `videos/${fileName}`;
     logger.info(`Uploading video to Storage: ${storagePath}`, { phase: 'STORAGE_UPLOAD' });
 
-    const fileBuffer = await fs.readFile(filePath);
+    const fileBuffer = Buffer.isBuffer(input) ? input : await fs.readFile(input);
     const { data, error } = await supabase.storage
         .from(BUCKET)
         .upload(storagePath, fileBuffer, {
@@ -71,16 +70,16 @@ export async function uploadVideo(filePath, fileName) {
 }
 
 /**
- * Upload audio file to Supabase Storage
- * @param {string} filePath - Local path to audio file
+ * Upload audio to Supabase Storage (accepts buffer or file path)
+ * @param {Buffer|string} input - Buffer or local file path
  * @param {string} fileName - e.g. 'hook_1.mp3'
  * @returns {{ url: string, path: string }}
  */
-export async function uploadAudio(filePath, fileName) {
+export async function uploadAudio(input, fileName) {
     const storagePath = `audios/${fileName}`;
     logger.info(`Uploading audio to Storage: ${storagePath}`, { phase: 'STORAGE_UPLOAD' });
 
-    const fileBuffer = await fs.readFile(filePath);
+    const fileBuffer = Buffer.isBuffer(input) ? input : await fs.readFile(input);
     const { data, error } = await supabase.storage
         .from(BUCKET)
         .upload(storagePath, fileBuffer, {
@@ -97,3 +96,45 @@ export async function uploadAudio(filePath, fileName) {
     logger.info(`Audio uploaded: ${urlData.publicUrl}`, { phase: 'STORAGE_OK' });
     return { url: urlData.publicUrl, path: storagePath };
 }
+
+/**
+ * Upload any buffer to Supabase Storage
+ * @param {Buffer} buffer - File buffer
+ * @param {string} storagePath - Full path in bucket, e.g. 'audios/briefing123/hook_1.mp3'
+ * @param {string} contentType - MIME type
+ * @returns {{ url: string, path: string }}
+ */
+export async function uploadBuffer(buffer, storagePath, contentType = 'application/octet-stream') {
+    logger.info(`Uploading to Storage: ${storagePath}`, { phase: 'STORAGE_UPLOAD' });
+
+    const { data, error } = await supabase.storage
+        .from(BUCKET)
+        .upload(storagePath, buffer, { contentType, upsert: true });
+
+    if (error) {
+        logger.error(`Upload failed: ${error.message}`, { phase: 'STORAGE_ERROR' });
+        throw error;
+    }
+
+    const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(storagePath);
+    logger.info(`Uploaded: ${urlData.publicUrl}`, { phase: 'STORAGE_OK' });
+    return { url: urlData.publicUrl, path: storagePath };
+}
+
+/**
+ * Get a temp file path (for FFmpeg processing that needs file I/O)
+ * Auto-cleans after callback completes.
+ * @param {string} ext - File extension (e.g. '.mp3')
+ * @param {Function} callback - async (tmpPath) => result
+ * @returns {*} callback result
+ */
+export async function withTempFile(ext, callback) {
+    const tmpPath = path.join(os.tmpdir(), `adsgen_${Date.now()}_${Math.random().toString(36).slice(2)}${ext}`);
+    try {
+        return await callback(tmpPath);
+    } finally {
+        await fs.remove(tmpPath).catch(() => { });
+    }
+}
+
+export default { uploadAvatar, uploadVideo, uploadAudio, uploadBuffer, withTempFile };

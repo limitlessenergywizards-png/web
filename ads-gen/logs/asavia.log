@@ -191,3 +191,231 @@
 2026-02-23 10:06:15 info: [SELECTOR_SINGLE] Only 1 variation. Auto-selecting.
 2026-02-23 10:06:16 info: [STORAGE_UPLOAD] Uploading video to Storage: videos/38c072c2-93ca-408f-aa11-4032a7232747/hook_1_v1_selected.mp4
 2026-02-23 10:06:18 info: [STORAGE_OK] Video uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/videos/38c072c2-93ca-408f-aa11-4032a7232747/hook_1_v1_selected.mp4
+2026-02-23 10:42:44 info: [TEST_START] === AUDIO GENERATION TEST ===
+2026-02-23 10:42:44 info: [TEST_VOICES] [Test] No ELEVENLABS_VOICE_ID set. Listing available voices...
+2026-02-23 10:42:44 info: [VOICE_LIST] [ElevenLabs] Listing voices...
+2026-02-23 10:42:46 info: [VOICE_LIST_OK] [ElevenLabs] Found 21 voices
+2026-02-23 10:42:47 info: [TEST_SETUP] Briefing: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 10:42:47 info: [TEST_SCENES] Scenes: 4
+2026-02-23 10:45:25 info: [TEST_START] === AUDIO GENERATION TEST ===
+2026-02-23 10:45:25 info: [TEST_VOICES] [Test] No ELEVENLABS_VOICE_ID. Listing available voices...
+2026-02-23 10:45:25 info: [VOICE_LIST] [ElevenLabs] Listing voices...
+2026-02-23 10:45:25 info: [VOICE_LIST_OK] [ElevenLabs] Found 21 voices
+2026-02-23 10:45:26 info: [TEST_SETUP] Briefing: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 10:45:26 info: [TEST_SCENES] Scenes: 4
+2026-02-23 10:45:26 info: [TTS_GEN] [ElevenLabs] Generating speech (110 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:45:28 info: [TTS_DONE] [ElevenLabs] Speech ready: 131701 bytes (2.1s) | $0.033
+2026-02-23 10:45:28 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: ec3ed22f-e8dc-4f3d-a519-8d91eabf3186_raw.mp3
+2026-02-23 10:45:29 info: [AUDIO_NORM_OK] [AudioProc] Normalized: ec3ed22f-e8dc-4f3d-a519-8d91eabf3186_normalized.mp3
+2026-02-23 10:45:30 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_1.mp3
+2026-02-23 10:45:31 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_1.mp3
+2026-02-23 10:45:31 error: [DAL] Database error during salvarAudio: Could not find the 'arquivo_url' column of 'assets_audio' in the schema cache
+2026-02-23 10:45:31 info: [TTS_GEN] [ElevenLabs] Generating speech (107 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:45:33 info: [TTS_DONE] [ElevenLabs] Speech ready: 131701 bytes (1.6s) | $0.032
+2026-02-23 10:45:33 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: c6795556-5219-4f85-bc77-218e3b0a1320_raw.mp3
+2026-02-23 10:45:33 info: [AUDIO_NORM_OK] [AudioProc] Normalized: c6795556-5219-4f85-bc77-218e3b0a1320_normalized.mp3
+2026-02-23 10:45:33 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_2.mp3
+2026-02-23 10:45:36 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_2.mp3
+2026-02-23 10:45:36 error: [DAL] Database error during salvarAudio: Could not find the 'arquivo_url' column of 'assets_audio' in the schema cache
+2026-02-23 10:45:36 info: [TTS_GEN] [ElevenLabs] Generating speech (97 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:45:38 info: [TTS_DONE] [ElevenLabs] Speech ready: 113311 bytes (1.5s) | $0.029
+2026-02-23 10:45:38 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: 923b0361-b3e2-4fdc-a3bb-b05d350bc1ad_raw.mp3
+2026-02-23 10:45:38 info: [AUDIO_NORM_OK] [AudioProc] Normalized: 923b0361-b3e2-4fdc-a3bb-b05d350bc1ad_normalized.mp3
+2026-02-23 10:45:38 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_3.mp3
+2026-02-23 10:45:39 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_3.mp3
+2026-02-23 10:45:39 error: [DAL] Database error during salvarAudio: Could not find the 'arquivo_url' column of 'assets_audio' in the schema cache
+2026-02-23 10:45:39 info: [TTS_GEN] [ElevenLabs] Generating speech (791 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:45:49 info: [TTS_DONE] [ElevenLabs] Speech ready: 940870 bytes (9.4s) | $0.237
+2026-02-23 10:45:49 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: 03fb5f98-554f-43e5-ae85-7cdaeee8483b_raw.mp3
+2026-02-23 10:45:51 info: [AUDIO_NORM_OK] [AudioProc] Normalized: 03fb5f98-554f-43e5-ae85-7cdaeee8483b_normalized.mp3
+2026-02-23 10:45:51 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/body_99.mp3
+2026-02-23 10:45:52 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/body_99.mp3
+2026-02-23 10:45:52 error: [DAL] Database error during salvarAudio: Could not find the 'arquivo_url' column of 'assets_audio' in the schema cache
+2026-02-23 10:48:32 info: [TEST_START] === AUDIO GENERATION TEST ===
+2026-02-23 10:48:32 info: [TEST_VOICES] [Test] No ELEVENLABS_VOICE_ID. Listing available voices...
+2026-02-23 10:48:32 info: [VOICE_LIST] [ElevenLabs] Listing voices...
+2026-02-23 10:48:32 info: [VOICE_LIST_OK] [ElevenLabs] Found 21 voices
+2026-02-23 10:48:32 info: [TEST_SETUP] Briefing: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 10:48:33 info: [TEST_SCENES] Scenes: 4
+2026-02-23 10:48:33 info: [TTS_GEN] [ElevenLabs] Generating speech (110 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:48:35 info: [TTS_DONE] [ElevenLabs] Speech ready: 152599 bytes (2.2s) | $0.033
+2026-02-23 10:48:35 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: ec3ed22f-e8dc-4f3d-a519-8d91eabf3186_raw.mp3
+2026-02-23 10:48:36 info: [AUDIO_NORM_OK] [AudioProc] Normalized: ec3ed22f-e8dc-4f3d-a519-8d91eabf3186_normalized.mp3
+2026-02-23 10:48:36 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_1.mp3
+2026-02-23 10:48:37 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_1.mp3
+2026-02-23 10:48:37 info: [TTS_GEN] [ElevenLabs] Generating speech (107 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:48:39 info: [TTS_DONE] [ElevenLabs] Speech ready: 129611 bytes (2.1s) | $0.032
+2026-02-23 10:48:39 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: c6795556-5219-4f85-bc77-218e3b0a1320_raw.mp3
+2026-02-23 10:48:39 info: [AUDIO_NORM_OK] [AudioProc] Normalized: c6795556-5219-4f85-bc77-218e3b0a1320_normalized.mp3
+2026-02-23 10:48:39 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_2.mp3
+2026-02-23 10:48:41 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_2.mp3
+2026-02-23 10:48:41 info: [TTS_GEN] [ElevenLabs] Generating speech (97 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:48:43 info: [TTS_DONE] [ElevenLabs] Speech ready: 130447 bytes (1.6s) | $0.029
+2026-02-23 10:48:43 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: 923b0361-b3e2-4fdc-a3bb-b05d350bc1ad_raw.mp3
+2026-02-23 10:48:43 info: [AUDIO_NORM_OK] [AudioProc] Normalized: 923b0361-b3e2-4fdc-a3bb-b05d350bc1ad_normalized.mp3
+2026-02-23 10:48:43 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_3.mp3
+2026-02-23 10:48:43 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_3.mp3
+2026-02-23 10:48:44 info: [TTS_GEN] [ElevenLabs] Generating speech (791 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:48:53 info: [TTS_DONE] [ElevenLabs] Speech ready: 936690 bytes (9.5s) | $0.237
+2026-02-23 10:48:53 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: 03fb5f98-554f-43e5-ae85-7cdaeee8483b_raw.mp3
+2026-02-23 10:48:55 info: [AUDIO_NORM_OK] [AudioProc] Normalized: 03fb5f98-554f-43e5-ae85-7cdaeee8483b_normalized.mp3
+2026-02-23 10:48:55 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/body_99.mp3
+2026-02-23 10:48:56 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/body_99.mp3
+2026-02-23 10:48:57 warn: [SYNC_WARN] [Sync] ⚠️ Cena HOOK 1: áudio (9.5s) > vídeo (5.0s) — delta 89.5% — REANIMAR VÍDEO com duração maior
+2026-02-23 10:54:22 info: [TEST_START] === AUDIO TEST (Supabase-only storage) ===
+2026-02-23 10:54:22 info: [VOICE_LIST] [ElevenLabs] Listing voices...
+2026-02-23 10:54:23 info: [VOICE_LIST_OK] [ElevenLabs] Found 21 voices
+2026-02-23 10:54:24 info: [TTS_GEN] [ElevenLabs] Generating speech (110 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:54:26 info: [TTS_DONE] [ElevenLabs] Speech ready: 130447 bytes (2.0s) | $0.033
+2026-02-23 10:54:26 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: adsgen_1771854864343_te8887t07yo.mp3
+2026-02-23 10:54:26 info: [AUDIO_NORM_OK] [AudioProc] Normalized: adsgen_1771854864343_zxa0x3j1x3.mp3
+2026-02-23 10:54:27 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_1.mp3
+2026-02-23 10:54:28 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_1.mp3
+2026-02-23 10:54:28 info: [TTS_GEN] [ElevenLabs] Generating speech (107 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:54:30 info: [TTS_DONE] [ElevenLabs] Speech ready: 122088 bytes (1.5s) | $0.032
+2026-02-23 10:54:30 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: adsgen_1771854868325_dnsrc6j4zuu.mp3
+2026-02-23 10:54:30 info: [AUDIO_NORM_OK] [AudioProc] Normalized: adsgen_1771854868325_jjrnxnsk33.mp3
+2026-02-23 10:54:30 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_2.mp3
+2026-02-23 10:54:31 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_2.mp3
+2026-02-23 10:54:31 info: [TTS_GEN] [ElevenLabs] Generating speech (97 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:54:33 info: [TTS_DONE] [ElevenLabs] Speech ready: 133373 bytes (1.7s) | $0.029
+2026-02-23 10:54:33 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: adsgen_1771854871389_iqa73t26sbl.mp3
+2026-02-23 10:54:34 info: [AUDIO_NORM_OK] [AudioProc] Normalized: adsgen_1771854871389_htjz2en9tob.mp3
+2026-02-23 10:54:34 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_3.mp3
+2026-02-23 10:54:34 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/hook_3.mp3
+2026-02-23 10:54:34 info: [TTS_GEN] [ElevenLabs] Generating speech (791 chars) voice=EXAVITQu4vr4xnSDxMaL
+2026-02-23 10:54:44 info: [TTS_DONE] [ElevenLabs] Speech ready: 938780 bytes (9.7s) | $0.237
+2026-02-23 10:54:44 info: [AUDIO_NORM] [AudioProc] Normalizing to -16 LUFS: adsgen_1771854874712_unc9esxmv9.mp3
+2026-02-23 10:54:46 info: [AUDIO_NORM_OK] [AudioProc] Normalized: adsgen_1771854874712_bc0n7dn4kpo.mp3
+2026-02-23 10:54:46 info: [STORAGE_UPLOAD] Uploading audio to Storage: audios/38c072c2-93ca-408f-aa11-4032a7232747/body_99.mp3
+2026-02-23 10:54:48 info: [STORAGE_OK] Audio uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/audios/38c072c2-93ca-408f-aa11-4032a7232747/body_99.mp3
+2026-02-23 10:54:48 warn: [SYNC_WARN] [Sync] ⚠️ Cena HOOK 1: áudio (8.1s) > vídeo (5.0s) — delta 61.6% — REANIMAR VÍDEO com duração maior
+2026-02-23 11:34:12 info: [TEST_START] === VIDEO EDITING TEST ===
+2026-02-23 11:34:14 error: [TEST_ERROR] Test failed: Input formats lavfi, lavfi are not available
+2026-02-23 11:35:17 info: [TEST_START] === VIDEO EDITING TEST ===
+2026-02-23 11:35:19 info: [VIDEO_EDIT] [VideoEditor] Removing audio: hook_1_v1.mp4
+2026-02-23 11:35:19 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ removeAudio
+2026-02-23 11:35:21 info: [VIDEO_EDIT] [VideoEditor] Adding narration (speed ×1): hook1_muted.mp4
+2026-02-23 11:35:23 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ addNarration
+2026-02-23 11:35:23 info: [VIDEO_EDIT] [VideoEditor] Adding subtitles (110 chars)
+2026-02-23 11:35:23 error: [VIDEO_EDIT_ERR] [VideoEditor] ❌ addSubtitles: ffmpeg exited with code 234: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857317341/hook1_subtitled.mp4.
+Error opening output files: Invalid argument
+
+2026-02-23 11:35:23 error: [TEST_ERROR] Test failed: ffmpeg exited with code 234: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857317341/hook1_subtitled.mp4.
+Error opening output files: Invalid argument
+
+2026-02-23 11:36:24 info: [TEST_START] === VIDEO EDITING TEST ===
+2026-02-23 11:36:25 info: [VIDEO_EDIT] [VideoEditor] Removing audio: hook_1_v1.mp4
+2026-02-23 11:36:25 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ removeAudio
+2026-02-23 11:36:26 info: [VIDEO_EDIT] [VideoEditor] Adding narration (speed ×1): hook1_muted.mp4
+2026-02-23 11:36:28 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ addNarration
+2026-02-23 11:36:28 info: [VIDEO_EDIT] [VideoEditor] Adding subtitles (110 chars)
+2026-02-23 11:36:28 error: [VIDEO_EDIT_ERR] [VideoEditor] ❌ addSubtitles: ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857384125/hook1_subtitled.mp4.
+Error opening output files: Filter not found
+
+2026-02-23 11:36:28 error: [TEST_ERROR] Test failed: ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857384125/hook1_subtitled.mp4.
+Error opening output files: Filter not found
+
+2026-02-23 11:37:27 info: [TEST_START] === VIDEO EDITING TEST ===
+2026-02-23 11:37:28 info: [VIDEO_EDIT] [VideoEditor] Removing audio: hook_1_v1.mp4
+2026-02-23 11:37:28 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ removeAudio
+2026-02-23 11:37:29 info: [VIDEO_EDIT] [VideoEditor] Adding narration (speed ×1): hook1_muted.mp4
+2026-02-23 11:37:31 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ addNarration
+2026-02-23 11:37:31 info: [VIDEO_EDIT] [VideoEditor] Adding subtitles (110 chars)
+2026-02-23 11:37:31 error: [VIDEO_EDIT_ERR] [VideoEditor] ❌ addSubtitles: ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857447341/hook1_subtitled.mp4.
+Error opening output files: Filter not found
+
+2026-02-23 11:37:31 warn: [VIDEO_EDIT_WARN] [VideoEditor] ⚠️ Subtitles not available (ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857447341/hook1_subtitled.mp4.
+Error opening output files: Filter not found
+). Install FFmpeg with --enable-libfreetype. Copying video without subtitles.
+2026-02-23 11:37:31 info: [VIDEO_EDIT] [VideoEditor] Applying effect: fade-in
+2026-02-23 11:37:31 error: [VIDEO_EDIT_ERR] [VideoEditor] ❌ applyEffect(fade-in): ffmpeg exited with code 234: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857447341/hook1_final.mp4.
+Error opening output files: Invalid argument
+
+2026-02-23 11:37:31 error: [TEST_ERROR] Test failed: ffmpeg exited with code 234: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857447341/hook1_final.mp4.
+Error opening output files: Invalid argument
+
+2026-02-23 11:38:28 info: [TEST_START] === VIDEO EDITING TEST ===
+2026-02-23 11:38:29 info: [VIDEO_EDIT] [VideoEditor] Removing audio: hook_1_v1.mp4
+2026-02-23 11:38:30 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ removeAudio
+2026-02-23 11:38:30 info: [VIDEO_EDIT] [VideoEditor] Adding narration (speed ×1): hook1_muted.mp4
+2026-02-23 11:38:34 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ addNarration
+2026-02-23 11:38:34 info: [VIDEO_EDIT] [VideoEditor] Adding subtitles (110 chars)
+2026-02-23 11:38:34 error: [VIDEO_EDIT_ERR] [VideoEditor] ❌ addSubtitles: ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857508160/hook1_subtitled.mp4.
+Error opening output files: Filter not found
+
+2026-02-23 11:38:34 warn: [VIDEO_EDIT_WARN] [VideoEditor] ⚠️ Subtitles not available (ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857508160/hook1_subtitled.mp4.
+Error opening output files: Filter not found
+). Install FFmpeg with --enable-libfreetype. Copying video without subtitles.
+2026-02-23 11:38:34 info: [VIDEO_EDIT] [VideoEditor] Applying effect: fade-in
+2026-02-23 11:38:39 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ applyEffect(fade-in)
+2026-02-23 11:38:39 info: [VIDEO_EDIT] [VideoEditor] Removing audio: body_99_v1.mp4
+2026-02-23 11:38:39 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ removeAudio
+2026-02-23 11:38:42 info: [VIDEO_EDIT] [VideoEditor] Adding narration (speed ×1): body_muted.mp4
+2026-02-23 11:38:44 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ addNarration
+2026-02-23 11:38:44 info: [VIDEO_EDIT] [VideoEditor] Adding subtitles (791 chars)
+2026-02-23 11:38:44 error: [VIDEO_EDIT_ERR] [VideoEditor] ❌ addSubtitles: ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857508160/body_subtitled.mp4.
+Error opening output files: Filter not found
+
+2026-02-23 11:38:44 warn: [VIDEO_EDIT_WARN] [VideoEditor] ⚠️ Subtitles not available (ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857508160/body_subtitled.mp4.
+Error opening output files: Filter not found
+). Install FFmpeg with --enable-libfreetype. Copying video without subtitles.
+2026-02-23 11:38:44 info: [VIDEO_EDIT] [VideoEditor] Applying effect: zoom-in
+2026-02-23 11:38:46 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ applyEffect(zoom-in)
+2026-02-23 11:38:46 info: [CONCAT_ASSEMBLE] [Concat] Assembling creative: test_20260223_hook1_v1.mp4
+2026-02-23 11:38:46 info: [CONCAT] [Concat] Concatenating 2 scenes (fade=0.3s)
+2026-02-23 11:38:46 error: [CONCAT_ERR] [Concat] ❌ concatenateScenes(2 files): ffmpeg exited with code 234: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857508160/finais/test_20260223_hook1_v1.mp4.
+Error opening output files: Invalid argument
+
+2026-02-23 11:38:46 error: [TEST_ERROR] Test failed: ffmpeg exited with code 234: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857508160/finais/test_20260223_hook1_v1.mp4.
+Error opening output files: Invalid argument
+
+2026-02-23 11:39:39 info: [TEST_START] === VIDEO EDITING TEST ===
+2026-02-23 11:39:40 info: [VIDEO_EDIT] [VideoEditor] Removing audio: hook_1_v1.mp4
+2026-02-23 11:39:41 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ removeAudio
+2026-02-23 11:39:41 info: [VIDEO_EDIT] [VideoEditor] Adding narration (speed ×1): hook1_muted.mp4
+2026-02-23 11:39:45 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ addNarration
+2026-02-23 11:39:45 info: [VIDEO_EDIT] [VideoEditor] Adding subtitles (110 chars)
+2026-02-23 11:39:46 error: [VIDEO_EDIT_ERR] [VideoEditor] ❌ addSubtitles: ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857579194/hook1_subtitled.mp4.
+Error opening output files: Filter not found
+
+2026-02-23 11:39:46 warn: [VIDEO_EDIT_WARN] [VideoEditor] ⚠️ Subtitles not available (ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857579194/hook1_subtitled.mp4.
+Error opening output files: Filter not found
+). Install FFmpeg with --enable-libfreetype. Copying video without subtitles.
+2026-02-23 11:39:46 info: [VIDEO_EDIT] [VideoEditor] Applying effect: fade-in
+2026-02-23 11:39:49 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ applyEffect(fade-in)
+2026-02-23 11:39:49 info: [VIDEO_EDIT] [VideoEditor] Removing audio: body_99_v1.mp4
+2026-02-23 11:39:49 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ removeAudio
+2026-02-23 11:39:49 info: [VIDEO_EDIT] [VideoEditor] Adding narration (speed ×1): body_muted.mp4
+2026-02-23 11:39:50 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ addNarration
+2026-02-23 11:39:50 info: [VIDEO_EDIT] [VideoEditor] Adding subtitles (791 chars)
+2026-02-23 11:39:50 error: [VIDEO_EDIT_ERR] [VideoEditor] ❌ addSubtitles: ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857579194/body_subtitled.mp4.
+Error opening output files: Filter not found
+
+2026-02-23 11:39:50 warn: [VIDEO_EDIT_WARN] [VideoEditor] ⚠️ Subtitles not available (ffmpeg exited with code 8: Error opening output file /var/folders/c4/19kmynhd5yx34rhtpjzxch3m0000gn/T/adsgen_test_editor_1771857579194/body_subtitled.mp4.
+Error opening output files: Filter not found
+). Install FFmpeg with --enable-libfreetype. Copying video without subtitles.
+2026-02-23 11:39:50 info: [VIDEO_EDIT] [VideoEditor] Applying effect: zoom-in
+2026-02-23 11:39:52 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ applyEffect(zoom-in)
+2026-02-23 11:39:52 info: [CONCAT_ASSEMBLE] [Concat] Assembling creative: test_20260223_hook1_v1.mp4
+2026-02-23 11:39:52 info: [CONCAT] [Concat] Concatenating 2 scenes
+2026-02-23 11:39:56 info: [CONCAT_OK] [Concat] ✅ concatenateScenes(2 files)
+2026-02-23 11:39:56 info: [CONCAT_ASSEMBLE_OK] [Concat] ✅ Creative ready: test_20260223_hook1_v1.mp4 (11.4s, 1.3MB)
+2026-02-23 11:39:56 info: [VIDEO_EXPORT] [VideoEditor] Exporting final: test_20260223_hook1_v1.mp4
+2026-02-23 11:40:02 info: [VIDEO_EDIT_OK] [VideoEditor] ✅ exportFinal
+2026-02-23 11:40:02 info: [STORAGE_UPLOAD] Uploading to Storage: criativos/38c072c2-93ca-408f-aa11-4032a7232747/test_20260223_hook1_v1.mp4
+2026-02-23 11:40:04 info: [STORAGE_OK] Uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/criativos/38c072c2-93ca-408f-aa11-4032a7232747/test_20260223_hook1_v1.mp4
+2026-02-23 12:53:45 info: 
+🔗 Acesse esta URL para autorizar o Google Drive:
+
+2026-02-23 12:53:45 info: https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.file%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive&response_type=code&client_id=937873237754-02mjoljg1rbe1a2etv9lhjqbo5g8rdgl.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob
+
+2026-02-23 12:53:45 info: Depois execute: ./index.js gdrive-token --code "DIGITE_O_CODIGO_AQUI"
+
+2026-02-23 13:13:41 info: 
+🔗 Acesse esta URL para autorizar o Google Drive:
+
+2026-02-23 13:13:41 info: https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.file%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive&response_type=code&client_id=937873237754-02mjoljg1rbe1a2etv9lhjqbo5g8rdgl.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob
+
+2026-02-23 13:13:41 info: Depois execute: ./index.js gdrive-token --code "DIGITE_O_CODIGO_AQUI"
+
