@@ -3,7 +3,7 @@ import path from 'path';
 import os from 'os';
 import fs from 'fs-extra';
 import { logger } from '../utils/logger.js';
-import { buscarBriefing, listarCenas, salvarAudio, logFase } from '../db/dal.js';
+import { buscarBriefing, listarCenas, salvarAudio, logFase, buscarAudioIdentico } from '../db/dal.js';
 import { generateSpeech } from '../tools/elevenlabs-client.js';
 import { normalizeVolume, getAudioDuration } from '../tools/audio-processor.js';
 import { uploadAudio, withTempFile } from '../tools/storage-uploader.js';
@@ -69,6 +69,32 @@ export const audioAgent = {
                 }
 
                 logger.info(`[AudioAgent] [${cena.tipo.toUpperCase()} ${cena.ordem}] "${texto.substring(0, 60)}..." (${texto.length} chars)`, { phase: 'AUDIO_SCENE' });
+
+                // Check cache first
+                const existing = await buscarAudioIdentico(texto, voice);
+                if (existing) {
+                    logger.info(`[AudioAgent] ♻️ Reusing existing audio (ID: ${existing.id}) for exact match!`, { phase: 'AUDIO_REUSE' });
+
+                    const audioRecord = await salvarAudio({
+                        cena_id: cena.id,
+                        texto_narrado: texto,
+                        voice_id: voice,
+                        voice_nome: existing.voice_nome,
+                        modelo_usado: existing.modelo_usado,
+                        custo_usd: 0, // Cached -> no cost
+                        duracao_geracao_ms: 0,
+                        duracao_segundos: existing.duracao_segundos,
+                        arquivo_path: existing.arquivo_path,
+                        status: 'pronto'
+                    });
+
+                    results.push({
+                        cenaId: cena.id, tipo: cena.tipo, ordem: cena.ordem,
+                        chars: 0, duracao: existing.duracao_segundos, cost: 0,
+                        storageUrl: existing.arquivo_path, audioId: audioRecord.id
+                    });
+                    continue;
+                }
 
                 // All processing uses temp files in /tmp — nothing in the project folder
                 const storageUrl = await withTempFile('.mp3', async (rawTmp) => {

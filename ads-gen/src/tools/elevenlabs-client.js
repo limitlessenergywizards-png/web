@@ -5,6 +5,7 @@ import FormData from 'form-data';
 import dotenv from 'dotenv';
 import { logger } from '../utils/logger.js';
 import { logApiUsage } from '../db/dal.js';
+import { withRetry } from '../utils/retry.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });
 
@@ -39,7 +40,7 @@ export async function generateSpeech(texto, voiceId = null, config = {}) {
     const startTime = Date.now();
 
     try {
-        const response = await axios.post(
+        const response = await withRetry(() => axios.post(
             `${API_BASE}/text-to-speech/${voice}`,
             {
                 text: texto,
@@ -51,7 +52,7 @@ export async function generateSpeech(texto, voiceId = null, config = {}) {
                 responseType: 'arraybuffer',
                 timeout: 60_000
             }
-        );
+        ), 3, 2000, 'ElevenLabs TTS Generation');
 
         const buffer = Buffer.from(response.data);
         const elapsed = Date.now() - startTime;

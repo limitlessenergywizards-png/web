@@ -1,36 +1,126 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Limitless Energy Wizards - Ads-Gen Pipeline
 
-## Getting Started
+Bem-vindo ao repositório master do **Ads-Gen**, o ecossistema automatizado e state-of-the-art para criação autônoma de criativos virais em vídeo.
 
-First, run the development server:
+O sistema é dividido em dois grandes pilares:
+1. **Frontend (Next.js):** Um painel Kanban em tempo real para controle do fluxo de criativos.
+2. **Backend CLI (Node.js):** Um motor autônomo baseado em múltiplos agentes de IA (LLMs, TTS, Geradores de Imagem e Vídeo) que orquestram a concepção, narração, animação e edição dos vídeos.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🏗️ Arquitetura do Sistema
+
+```ascii
++------------------------+        +--------------------------+
+|  FRONTEND (Next.js)    |        |   BACKEND CLI (Node.js)  |
+|  - Kanban interativo   |        |   - Agents independentes |
+|  - Real-time updates   |<======>|   - FFmpeg processador   |
+|                        |        |   - Retry / Cache System |
++------------------------+        +--------------------------+
+            |                                  |
+            v                                  v
++------------------------------------------------------------+
+|                    SUPABASE (PostgreSQL)                   |
+|  - criativos_finais, projetos, cenas, pipeline_logs        |
+|  - Storage: Avatares, Áudios, Vídeos MP4                   |
++------------------------------------------------------------+
+                                |
+          +---------------------+---------------------+
+          |                     |                     |
+          v                     v                     v
++-------------------+ +-------------------+ +-------------------+
+| Text & Reasoning  | |   Image & Video   | |    Audio TTS      |
+| - Anthropic       | | - Fal.ai (Flux)   | | - ElevenLabs      |
+| - OpenAI/Gemini   | | - Runway/Alibaba  | |                   |
++-------------------+ +-------------------+ +-------------------+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ⚙️ Pré-requisitos & Quickstart
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Requisitos do Sistema
+* **Node.js** v20+
+* **FFmpeg** instalado e adicionado ao PATH do sistema operacional.
+* **Supabase** (Projeto com tabelas mapeadas).
 
-## Learn More
+### 2. Configurando as Variáveis de Ambiente
+Crie um arquivo `.env` dentro da pasta `ads-gen/config/` (para a CLI) e na raiz (para o Frontend), com as seguintes chaves:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+# ==== SUPABASE (Obrigatório) ====
+SUPABASE_URL="https://xxx.supabase.co"
+SUPABASE_SERVICE_ROLE_KEY="ey..."
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# ==== LLMs & Agents (Obrigatório) ====
+OPENAI_API_KEY="sk-..."
+FAL_API_KEY="key:secret"
+ELEVENLABS_API_KEY="sk_..."
+ELEVENLABS_VOICE_ID="ExemploVoiceId123"
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# ==== Integrações Google (Obrigatório) ====
+GOOGLE_CLIENT_ID="..."
+GOOGLE_CLIENT_SECRET="..."
+GOOGLE_REFRESH_TOKEN="..."
+GOOGLE_DRIVE_FOLDER_ID="..."
 
-## Deploy on Vercel
+# ==== Opcionais / Fallbacks ====
+ANTHROPIC_API_KEY="..."
+GEMINI_API_KEY="..."
+ALIBABA_API_KEY="..."
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. Rodando o Pipeline (Backend)
+Vá até o diretório da CLI e faça a checagem do sistema:
+```bash
+cd ads-gen
+npm install
+node index.js check
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Principais Comandos:**
+
+* `node index.js auto --briefing 101` — Roda o fluxo autônomo total (do copy à edição).
+* `node index.js parse data/exemplo.txt` — Injeta um arquivo de texto local como um novo briefing no banco de dados.
+* `node index.js dashboard` — Exibe estatísticas de produção, de custos (API usage) e de tempo.
+* `node index.js auth` — Fluxo local para autorizar a conta Google Drive.
+
+### 4. Rodando o Kanban (Frontend)
+Na pasta raiz do projeto:
+```bash
+npm install
+npm run dev
+```
+Acesse `http://localhost:3030/pipeline`. O quadro atualizará em tempo real puxando os dados do campo `criados_em` no banco Supabase.
+
+---
+
+## 💸 Custo Estimado e Resumo de Resiliência
+
+**Cache Inteligente:** O sistema busca áudios idênticos já gerados no Supabase Storage e reaproveita Avatares previamente processados (`reutilizavel=true`) para impedir recriações inúteis, barateando custos drásticamente.
+**Backoff Exponencial:** Todas as APIs (ElevenLabs, Claude, OpenAI, Fal.ai) estão embrulhadas no script nativo de Retry, capaz de interceptar os limites de `429 Too Many Requests`.
+
+| Provedor   | Operação         | Custo Médio por Call / Job |
+| ---------- | ---------------- | -------------------------- |
+| ElevenLabs | Narrações (TTS)  | ~$0.15 a $0.35 por hook    |
+| Fal.ai     | Avatar (Flux v1) | $0.05 por imagem           |
+| Anthropic  | Parsing / Agents | ~$0.02 a $0.05             |
+| Alibaba    | Video Gen (I2V)  | ~$0.20 por 5s              |
+
+*(Média final: **~$0.90 a $1.20** por criativo de 30 a 60 segundos)*
+
+---
+
+## ⚠️ Troubleshooting
+
+**1. Comando `--check` falha na ElevenLabs**
+Certifique-se que o usuário gerador da chave tem permissões para ler o endpoint `/voices`. 
+
+**2. FFmpeg não encontrado (FALHA no Health Check)**
+O CLI depende de FFmpeg. Instale no Mac com `brew install ffmpeg` ou em Windows ajustando as variáveis de ambiente PATH. Alternativamente, você pode usar a env `FFMPEG_PATH="C:/caminho/ffmpeg.exe"`.
+
+**3. Cards não aparecem no Kanban do Next.js**
+O frontend filtra os criativos pelas colunas Roteirizando, Animando, Editando, Pronto, Falhas. Se os projetos estiverem com "concluido", garanta a compatibilidade dos arrays de mapeamento em `src/components/KanbanCard.tsx`.
+
+---
+*Powered by Deepmind AI Agent 🤖 (Antigravity Role).*

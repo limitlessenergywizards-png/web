@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { logger } from '../utils/logger.js';
 import { callAI } from '../utils/ai-provider.js';
+import { withRetry } from '../utils/retry.js';
 import { logApiUsage } from '../db/dal.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });
@@ -19,7 +20,7 @@ export async function describeImage(imageUrl) {
     try {
         const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
-        const result = await model.generateContent([
+        const result = await withRetry(async () => model.generateContent([
             {
                 inlineData: {
                     mimeType: 'image/jpeg',
@@ -38,7 +39,7 @@ Inclua OBRIGATORIAMENTE:
 - Ambiente de fundo (ex: "sala de estar, sofá bege")
 
 Retorne APENAS a descrição em texto corrido, sem tópicos, sem markdown.`
-        ]);
+        ]), 3, 2000, 'Gemini Vision Describe');
 
         const description = result.response.text();
         const elapsed = Date.now() - startTime;
@@ -86,12 +87,12 @@ export async function buildAvatarPrompt(descricao, tipoAvatar = 'principal') {
 
     const roleContext = AVATAR_TYPES[tipoAvatar] || AVATAR_TYPES.principal;
 
-    const result = await callAI({
+    const result = await withRetry(() => callAI({
         systemPrompt: AVATAR_PROMPT_SYSTEM,
         userMessage: `Descrição da pessoa:\n${descricao}\n\nPapel no criativo: ${roleContext}\n\nCrie o prompt de geração de imagem fotorrealista.`,
         maxTokens: 500,
         temperature: 0.6
-    });
+    }), 3, 1500, 'Avatar LLM Prompt Builder');
 
     logger.info(`Avatar prompt built (${result.length} chars)`, { phase: 'AVATAR_PROMPT_OK' });
     return result.trim();
@@ -108,7 +109,7 @@ export async function generateAvatar(prompt) {
         const { fal } = await import('@fal-ai/client');
         fal.config({ credentials: process.env.FAL_API_KEY });
 
-        const result = await fal.subscribe('fal-ai/flux-pro/v1.1', {
+        const result = await withRetry(() => fal.subscribe('fal-ai/flux-pro/v1.1', {
             input: {
                 prompt: prompt,
                 image_size: { width: 768, height: 1024 },
@@ -121,7 +122,7 @@ export async function generateAvatar(prompt) {
                     update.logs.forEach(log => logger.info(`  FAL: ${log.message}`, { phase: 'AVATAR_QUEUE' }));
                 }
             }
-        });
+        }), 3, 3000, 'Fal.ai Flux Avatar Gen');
 
         const imageUrl = result.data?.images?.[0]?.url;
         if (!imageUrl) throw new Error('No image URL returned from FAL AI');

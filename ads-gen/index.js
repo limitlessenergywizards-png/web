@@ -67,7 +67,7 @@ program
 
             const projetoId = await criarProjeto({
                 nome: options.projeto,
-                cliente: 'CLI User',
+                produto: 'Video Pipeline Exemplo',
                 status: 'ativo'
             });
 
@@ -147,20 +147,14 @@ program
         }
     });
 
-// ─── Command: Check APIs ───
+// ─── Command: Health Check ───
 program
     .command('check')
-    .description('Health check - Verifica se as chaves de API estão configuras')
-    .action(() => {
-        logger.info(`\n🔍 Resumo de APIs (.env):`);
-        logger.info(`Supabase API: ${process.env.SUPABASE_URL ? '✅ Ok' : '❌ Falta SUPABASE_URL'}`);
-        logger.info(`OpenAI API: ${process.env.OPENAI_API_KEY ? '✅ Ok' : '❌ Falta OPENAI_API_KEY'}`);
-        logger.info(`Anthropic API: ${process.env.ANTHROPIC_API_KEY ? '✅ Ok' : '⚠️ Falta (Opcional)'}`);
-        logger.info(`Gemini API: ${process.env.GEMINI_API_KEY ? '✅ Ok' : '⚠️ Falta (Opcional)'}`);
-        logger.info(`Fal.ai API: ${process.env.FAL_API_KEY ? '✅ Ok' : '❌ Falta FAL_API_KEY'}`);
-        logger.info(`ElevenLabs API: ${process.env.ELEVENLABS_API_KEY ? '✅ Ok' : '❌ Falta ELEVENLABS_API_KEY'}`);
-        logger.info(`Google Drive (Client ID): ${process.env.GOOGLE_CLIENT_ID ? '✅ Ok' : '❌ Falta GOOGLE_CLIENT_ID'}`);
-        logger.info(`Google Folder ID: ${process.env.GOOGLE_DRIVE_FOLDER_ID ? '✅ Ok' : '❌ Falta GOOGLE_DRIVE_FOLDER_ID'}`);
+    .description('Health check - Verifica dependências locais, APIs e conexão DB')
+    .action(async () => {
+        const { runHealthCheck } = await import('./src/utils/health-check.js');
+        const success = await runHealthCheck();
+        process.exit(success ? 0 : 1);
     });
 
 // ─── Command: Google Drive Login Setup ───
@@ -176,6 +170,27 @@ program
         } catch (err) {
             logger.error(`❌ Erro de Autenticação: ${err.message}`);
             process.exit(1);
+        }
+    });
+
+// ─── Command: CLI Stats Dashboard ───
+program
+    .command('dashboard')
+    .description('Abre o painel em tempo real de estatísticas do Supabase (produção, tempo, status, custos)')
+    .option('--watch', 'Modo live-reload', false)
+    .action(async (options) => {
+        const { renderDashboard } = await import('./src/dashboard/stats.js');
+
+        if (options.watch) {
+            console.clear();
+            await renderDashboard();
+            setInterval(async () => {
+                console.clear();
+                await renderDashboard();
+            }, 30000);
+        } else {
+            await renderDashboard();
+            process.exit(0);
         }
     });
 

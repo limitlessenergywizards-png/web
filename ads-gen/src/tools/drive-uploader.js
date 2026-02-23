@@ -281,4 +281,4 @@ export async function uploadTodos(briefingId, opts = {}) {
     return results;
 }
 
-export default { uploadCreativo, uploadFromUrl, criarSubpasta, getShareableUrl, uploadTodos, getAuthUrl, exchangeCode };
+export default { uploadCreativo, uploadFromUrl, criarSubpasta, getShareableUrl, uploadTodos, getAuthUrl, runAuthServer };

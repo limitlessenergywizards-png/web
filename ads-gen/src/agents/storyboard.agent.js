@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { logger } from '../utils/logger.js';
 import { callAI } from '../utils/ai-provider.js';
+import { withRetry } from '../utils/retry.js';
 import { buscarBriefing, listarCenas, atualizarCena, logFase, inserirPrompt } from '../db/dal.js';
 import { SYSTEM_PROMPT_STORYBOARD } from '../templates/storyboard.prompt.js';
 
@@ -50,12 +51,15 @@ SENTIMENTO EXPECTADO: ${cena.sentimento}
 DESCRIÇÃO PRÉVIA: ${cena.descricao_visual}
         `;
 
-                const outputText = await callAI({
-                    systemPrompt: SYSTEM_PROMPT_STORYBOARD,
-                    userMessage: `Gere a cinematografia para a seguinte cena, retornando APENAS JSON:\n${inputContext}`,
-                    maxTokens: 1200,
-                    temperature: 0.7
-                });
+                const outputText = await withRetry(
+                    () => callAI({
+                        systemPrompt: SYSTEM_PROMPT_STORYBOARD,
+                        userMessage: `Gere a cinematografia para a seguinte cena, retornando APENAS JSON:\n${inputContext}`,
+                        maxTokens: 1200,
+                        temperature: 0.7
+                    }),
+                    3, 2000, 'Storyboard AI Call'
+                );
 
                 const jsonMatch = outputText.match(/\{[\s\S]*\}/);
                 if (!jsonMatch) throw new Error("Could not extract JSON from AI response");

@@ -148,6 +148,24 @@ export const listarAudiosPorCena = async (cenaId) => {
     return handleDbResponse(data, error, 'listarAudiosPorCena');
 };
 
+export const buscarAudioIdentico = async (texto, voiceId) => {
+    const { data, error } = await supabaseAdmin
+        .from('assets_audio')
+        .select('*')
+        .eq('texto_narrado', texto)
+        .eq('voice_id', voiceId)
+        .eq('status', 'pronto')
+        .order('criado_em', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+    if (error) {
+        logger.warn(`Erro ao buscar áudio em cache: ${error.message}`);
+        return null;
+    }
+    return data;
+};
+
 // ==========================================
 // 7. CRIATIVOS_FINAIS
 // ==========================================

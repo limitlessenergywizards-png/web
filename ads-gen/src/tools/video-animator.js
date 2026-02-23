@@ -4,6 +4,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import { logger } from '../utils/logger.js';
 import { logApiUsage } from '../db/dal.js';
+import { withRetry } from '../utils/retry.js';
 import { getModelById, getAvailableModels, TIER_DEFAULTS } from '../config/video-models.js';
 import recommendModel from './model-recommender.js';
 
@@ -324,7 +325,7 @@ export async function animateImage(imagePath, prompt, opts = {}) {
 
         try {
             logger.info(`[Animator] Trying ${m.name} (${m.provider})...`, { phase: 'ANIMATOR_TRY' });
-            const result = await adapter(m, imagePath, prompt, duracao, withAudio, context);
+            const result = await withRetry(() => adapter(m, imagePath, prompt, duracao, withAudio, context), 3, 2000, `Video AI: ${m.name}`);
             logger.info(`[Animator] ✅ ${m.name} — $${(result.cost || 0).toFixed(3)}`, { phase: 'ANIMATOR_OK' });
             return result;
         } catch (err) {
@@ -358,5 +359,5 @@ export async function animateText(prompt, opts = {}) {
     const adapter = PROVIDER_ADAPTERS[model.provider];
     if (!adapter) throw new Error(`No adapter for ${model.provider}`);
 
-    return adapter(model, null, prompt, duracao, false, context);
+    return await withRetry(() => adapter(model, null, prompt, duracao, false, context), 3, 2000, `Video AI T2V: ${model.name}`);
 }

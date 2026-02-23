@@ -419,3 +419,16 @@ Error opening output files: Filter not found
 
 2026-02-23 13:13:41 info: Depois execute: ./index.js gdrive-token --code "DIGITE_O_CODIGO_AQUI"
 
+2026-02-23 14:50:04 info: 
+🔗 [GOOGLE DRIVE AUTH] Acesse o link abaixo no seu navegador:
+
+2026-02-23 14:50:04 info: https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&prompt=consent&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.file%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive&response_type=code&client_id=937873237754-02mjoljg1rbe1a2etv9lhjqbo5g8rdgl.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Foauth2callback
+
+2026-02-23 14:50:04 info: ⏳ Aguardando você fazer login e autorizar... (O servidor local está escutando na porta 3000)
+2026-02-23 14:50:24 info: [DRIVE_AUTH] [Drive] ✅ Refresh token obtained!
+2026-02-23 14:52:32 error: [DAL] Database error during criarProjeto: Could not find the 'cliente' column of 'projetos' in the schema cache
+2026-02-23 14:52:32 error: ❌ Erro Fatal: Could not find the 'cliente' column of 'projetos' in the schema cache
+2026-02-23 14:54:44 error: [DAL] Database error during criarProjeto: null value in column "produto" of relation "projetos" violates not-null constraint
+2026-02-23 14:54:44 error: ❌ Erro Fatal: null value in column "produto" of relation "projetos" violates not-null constraint
+2026-02-23 16:29:04 info: [VOICE_LIST] [ElevenLabs] Listing voices...
+2026-02-23 16:29:04 info: [VOICE_LIST_OK] [ElevenLabs] Found 21 voices

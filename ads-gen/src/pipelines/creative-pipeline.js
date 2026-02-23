@@ -8,6 +8,7 @@ import { audioAgent } from '../agents/audio.agent.js';
 import { editorAgent } from '../agents/editor.agent.js';
 import driveUploader from '../tools/drive-uploader.js';
 import { logFase, atualizarStatus, buscarBriefing, listarLogs } from '../db/dal.js';
+import { withTimeout } from '../utils/retry.js';
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -72,7 +73,8 @@ export class CreativePipeline {
                 await logFase({ projeto_id: briefingId, fase: fase.id, status: 'iniciado' }); // Using briefingId as projeto_id for logs
 
                 try {
-                    const result = await fase.run(briefingId);
+                    // Global Phase Timeout: 10 minutes
+                    const result = await withTimeout(fase.run(briefingId), 10 * 60 * 1000);
                     if (fase.id === 'entrega') deliveryResults = result;
 
                     await logFase({ projeto_id: briefingId, fase: fase.id, status: 'sucesso' });

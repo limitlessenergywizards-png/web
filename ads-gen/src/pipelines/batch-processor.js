@@ -46,7 +46,7 @@ export class BatchProcessor {
                     // Setup DB entries
                     const projetoId = await criarProjeto({
                         nome: projName,
-                        cliente: 'BatchProcess',
+                        produto: 'Batch Generated',
                         status: 'ativo'
                     });
 
