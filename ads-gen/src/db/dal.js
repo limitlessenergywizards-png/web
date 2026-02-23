@@ -56,6 +56,11 @@ export const listarBriefingsPorProjeto = async (projetoId) => {
     return handleDbResponse(data, error, 'listarBriefingsPorProjeto');
 };
 
+export const buscarUltimoBriefing = async () => {
+    const { data, error } = await supabaseAdmin.from('briefings').select('*').order('criado_em', { ascending: false }).limit(1).single();
+    return handleDbResponse(data, error, 'buscarUltimoBriefing');
+};
+
 // ==========================================
 // 3. CENAS
 // ==========================================
@@ -68,6 +73,11 @@ export const criarCenas = async (briefingId, arrayDeCenas) => {
 export const listarCenas = async (briefingId) => {
     const { data, error } = await supabaseAdmin.from('cenas').select('*').eq('briefing_id', briefingId).order('ordem', { ascending: true });
     return handleDbResponse(data, error, 'listarCenas');
+};
+
+export const atualizarCena = async (id, dados) => {
+    const { data, error } = await supabaseAdmin.from('cenas').update(dados).eq('id', id).select().single();
+    return handleDbResponse(data, error, 'atualizarCena');
 };
 
 // ==========================================
@@ -199,4 +209,9 @@ export const incrementarUsoPrompt = async (id) => {
 export const atualizarScore = async (id, score) => {
     const { data, error } = await supabaseAdmin.from('prompt_library').update({ score_qualidade: score }).eq('id', id).select().single();
     return handleDbResponse(data, error, 'atualizarScore');
+};
+
+export const inserirPrompt = async (dados) => {
+    const { data, error } = await supabaseAdmin.from('prompt_library').insert([dados]).select().single();
+    return handleDbResponse(data, error, 'inserirPrompt');
 };

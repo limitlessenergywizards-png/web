@@ -1,15 +1,11 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { z } from 'zod';
 import dotenv from 'dotenv';
 import path from 'path';
 import { logger } from '../utils/logger.js';
+import { callAI } from '../utils/ai-provider.js';
 import { atualizarBriefing, criarCenas } from '../db/dal.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });
-
-const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY || 'dummy_key_to_init'
-});
 
 // Zod schema exactly matching User requirements
 const ParsedCopySchema = z.object({
@@ -58,27 +54,22 @@ export async function parseCopy(briefingId, copyText) {
     logger.info(`Starting Copy Parsing for briefing: ${briefingId}`, { phase: 'PARSER' });
 
     try {
-        const response = await anthropic.messages.create({
-            model: "claude-3-5-sonnet-20241022",
-            max_tokens: 2000,
-            temperature: 0.2,
-            system: SYSTEM_PROMPT,
-            messages: [
-                { role: 'user', content: `Analise este Copy de Vídeo e retorne o JSON estruturado:\n\n${copyText}` }
-            ]
+        const outputText = await callAI({
+            systemPrompt: SYSTEM_PROMPT,
+            userMessage: `Analise este Copy de Vídeo e retorne o JSON estruturado:\n\n${copyText}`,
+            maxTokens: 2000,
+            temperature: 0.2
         });
 
-        const outputText = response.content[0].text;
-
-        // Attempt to extract JSON if Claude added preamble
+        // Attempt to extract JSON
         const jsonMatch = outputText.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) throw new Error("Could not extract JSON from Claude's response");
+        if (!jsonMatch) throw new Error("Could not extract JSON from AI response");
 
         const parsedData = JSON.parse(jsonMatch[0]);
 
         // Validate with Zod
         const validatedData = ParsedCopySchema.parse(parsedData);
-        logger.info(`Copy structured successfully via Claude 3.5`, { phase: 'PARSER_SUCCESS' });
+        logger.info(`Copy structured successfully via AI fallback`, { phase: 'PARSER_SUCCESS' });
 
         // DB Operations: Update Briefing
         await atualizarBriefing(briefingId, {
@@ -98,7 +89,7 @@ export async function parseCopy(briefingId, copyText) {
 
         const cenaBody = {
             tipo: 'body',
-            ordem: 99, // Guarantee comes after hooks
+            ordem: 99,
             descricao_visual: validatedData.cenas_criticas.slice(3).join(', ') || "Cenário de desenvolvimento padrão",
             sentimento: 'solucao',
             duracao_segundos: validatedData.body.duracao_estimada

@@ -12,3 +12,34 @@
 2026-02-23 07:49:33 warn: [TEST_API_CHECK] Please add your actual Anthropic API Key to config/.env and run again.
 2026-02-23 07:49:33 info: [PARSER] Starting Copy Parsing for briefing: 7ad18d44-ee95-451d-b2fd-b602e06eba83
 2026-02-23 07:49:33 error: [PARSER_ERROR] Parser failed: 401 {"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"},"request_id":"req_011CYQsTaGxQ823Xqw4uy3qA"}
+2026-02-23 08:51:11 info: [TEST_START] Initializing Storyboard Agent Test...
+2026-02-23 08:51:12 info: [TEST_SETUP] Targeting Latest Briefing ID: 7ad18d44-ee95-451d-b2fd-b602e06eba83
+2026-02-23 09:01:38 info: [TEST_START] Initializing Copy Parser Test Pipeline...
+2026-02-23 09:01:38 info: [TEST_SETUP] 1. Creating Mock Project & Briefing in Supabase
+2026-02-23 09:01:39 info: [TEST_SETUP] Mock Briefing Created. ID: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:01:39 info: [TEST_EXECUTION] 2. Triggering Claude-3.5-Sonnet Copy Parser
+2026-02-23 09:01:39 warn: [TEST_API_CHECK] ⚠️ ANTHROPIC_API_KEY is not defined in config/.env. The AI call will fail.
+2026-02-23 09:01:39 warn: [TEST_API_CHECK] Please add your actual Anthropic API Key to config/.env and run again.
+2026-02-23 09:01:39 info: [PARSER] Starting Copy Parsing for briefing: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:01:39 info: [AI_PROVIDER] Trying AI provider: openai
+2026-02-23 09:02:00 info: [AI_PROVIDER] Success with provider: openai
+2026-02-23 09:02:00 info: [PARSER_SUCCESS] Copy structured successfully via AI fallback
+2026-02-23 09:02:00 info: [DB_UPDATE] Briefing 38c072c2-93ca-408f-aa11-4032a7232747 updated with JSON representation.
+2026-02-23 09:02:00 info: [DB_INSERT] 4 scenes successfully recorded for briefing 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:02:00 info: [TEST_VALIDATION] 3. Claude successfully parsed the data. Raw Output:
+2026-02-23 09:02:00 info: [TEST_VERIFICATION] 4. Verifying DB Record updates
+2026-02-23 09:02:12 info: [TEST_START] Initializing ElevenLabs Audio Pipeline Test...
+2026-02-23 09:02:12 info: [TEST_VOICES] Fetching available ElevenLabs voices...
+2026-02-23 09:02:12 info: [TEST_SETUP] Targeting Briefing ID: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:02:12 info: [TEST_VOICE_SELECT] Auto-selected voice: CwhRBWXzGAHq8TQ4Fs17
+2026-02-23 09:02:12 info: [TEST_EXECUTION] Running Audio Generation Pipeline...
+2026-02-23 09:02:12 info: [AUDIO_PIPELINE] Starting Audio Generation pipeline for briefing 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:02:13 info: [AUDIO_GEN] Generating audio with ElevenLabs (voice: CwhRBWXzGAHq8TQ4Fs17)
+2026-02-23 09:02:15 info: [AUDIO_SAVED] Audio saved: /Users/thierresavio/Documents/vibe_coding/VS CODE/claude_code/edicao-criativos/ads-gen/data/audio/38c072c2-93ca-408f-aa11-4032a7232747/hook_1.mp3 (~8s)
+2026-02-23 09:02:15 info: [AUDIO_GEN] Generating audio with ElevenLabs (voice: CwhRBWXzGAHq8TQ4Fs17)
+2026-02-23 09:02:17 info: [AUDIO_SAVED] Audio saved: /Users/thierresavio/Documents/vibe_coding/VS CODE/claude_code/edicao-criativos/ads-gen/data/audio/38c072c2-93ca-408f-aa11-4032a7232747/hook_2.mp3 (~8s)
+2026-02-23 09:02:17 info: [AUDIO_GEN] Generating audio with ElevenLabs (voice: CwhRBWXzGAHq8TQ4Fs17)
+2026-02-23 09:02:19 info: [AUDIO_SAVED] Audio saved: /Users/thierresavio/Documents/vibe_coding/VS CODE/claude_code/edicao-criativos/ads-gen/data/audio/38c072c2-93ca-408f-aa11-4032a7232747/hook_3.mp3 (~7s)
+2026-02-23 09:02:19 info: [AUDIO_GEN] Generating audio with ElevenLabs (voice: CwhRBWXzGAHq8TQ4Fs17)
+2026-02-23 09:02:30 info: [AUDIO_SAVED] Audio saved: /Users/thierresavio/Documents/vibe_coding/VS CODE/claude_code/edicao-criativos/ads-gen/data/audio/38c072c2-93ca-408f-aa11-4032a7232747/body_99.mp3 (~54s)
+2026-02-23 09:02:31 info: [AUDIO_COMPLETE] Audio pipeline complete. 4 audios generated.
