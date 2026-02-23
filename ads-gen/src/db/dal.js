@@ -215,3 +215,29 @@ export const inserirPrompt = async (dados) => {
     const { data, error } = await supabaseAdmin.from('prompt_library').insert([dados]).select().single();
     return handleDbResponse(data, error, 'inserirPrompt');
 };
+
+// ==========================================
+// 10. API_USAGE_LOGS (Cost Tracking)
+// ==========================================
+export const logApiUsage = async (dados) => {
+    const { data, error } = await supabaseAdmin.from('api_usage_logs').insert([dados]).select().single();
+    return handleDbResponse(data, error, 'logApiUsage');
+};
+
+export const listarUsagePorProjeto = async (projetoId) => {
+    const { data, error } = await supabaseAdmin.from('api_usage_logs').select('*').eq('projeto_id', projetoId).order('criado_em', { ascending: false });
+    return handleDbResponse(data, error, 'listarUsagePorProjeto');
+};
+
+export const resumoGastosPorProvider = async () => {
+    const { data, error } = await supabaseAdmin.from('api_usage_logs').select('provider, modelo, custo_usd, tipo_operacao, criado_em');
+    return handleDbResponse(data, error, 'resumoGastosPorProvider');
+};
+
+export const custoTotalMes = async () => {
+    const inicioMes = new Date();
+    inicioMes.setDate(1);
+    inicioMes.setHours(0, 0, 0, 0);
+    const { data, error } = await supabaseAdmin.from('api_usage_logs').select('custo_usd, provider, modelo, tipo_operacao, criado_em').gte('criado_em', inicioMes.toISOString());
+    return handleDbResponse(data, error, 'custoTotalMes');
+};

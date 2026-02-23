@@ -43,3 +43,151 @@
 2026-02-23 09:02:19 info: [AUDIO_GEN] Generating audio with ElevenLabs (voice: CwhRBWXzGAHq8TQ4Fs17)
 2026-02-23 09:02:30 info: [AUDIO_SAVED] Audio saved: /Users/thierresavio/Documents/vibe_coding/VS CODE/claude_code/edicao-criativos/ads-gen/data/audio/38c072c2-93ca-408f-aa11-4032a7232747/body_99.mp3 (~54s)
 2026-02-23 09:02:31 info: [AUDIO_COMPLETE] Audio pipeline complete. 4 audios generated.
+2026-02-23 09:12:01 info: [TEST_START] Initializing FAL AI Video Generation Test...
+2026-02-23 09:12:01 info: [TEST_VALIDATE] Running quick API validation with a single text-to-video...
+2026-02-23 09:12:01 info: [VIDEO_GEN] Generating text-to-video with Kling v2 (5s, 9:16)
+2026-02-23 09:14:23 info: [VIDEO_GEN_SUCCESS] Text-to-video generated: https://v3b.fal.media/files/b/0a8fa076/Nhvfv-6owR2X1UH2-rylj_output.mp4
+2026-02-23 09:14:24 warn: [TEST_WARN] Scenes don't have storyboard data yet. Running video gen with default prompts.
+2026-02-23 09:14:24 info: [TEST_EXECUTION] Generating videos for briefing 38c072c2-93ca-408f-aa11-4032a7232747 (4 scenes)...
+2026-02-23 09:14:24 info: [VIDEO_PIPELINE] Starting Video Generation Pipeline for briefing 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:14:24 info: [VIDEO_SCENE] Processing scene [HOOK] ordem 1
+2026-02-23 09:14:25 info: [VIDEO_GEN] Generating text-to-video with Kling v2 (5s, 9:16)
+2026-02-23 09:16:42 info: [VIDEO_GEN_SUCCESS] Text-to-video generated: https://v3b.fal.media/files/b/0a8fa084/ep0vIsPriaZ-XiA7rD-px_output.mp4
+2026-02-23 09:16:44 info: [VIDEO_DOWNLOAD] Video downloaded to: /Users/thierresavio/Documents/vibe_coding/VS CODE/claude_code/edicao-criativos/ads-gen/data/video/38c072c2-93ca-408f-aa11-4032a7232747/hook_1_v1.mp4
+2026-02-23 09:16:44 info: [VIDEO_SCENE] Processing scene [HOOK] ordem 2
+2026-02-23 09:16:45 info: [VIDEO_GEN] Generating text-to-video with Kling v2 (5s, 9:16)
+2026-02-23 09:19:02 info: [VIDEO_GEN_SUCCESS] Text-to-video generated: https://v3b.fal.media/files/b/0a8fa092/Ej9VNHSAw6K7mdhUzJL4o_output.mp4
+2026-02-23 09:19:03 info: [VIDEO_DOWNLOAD] Video downloaded to: /Users/thierresavio/Documents/vibe_coding/VS CODE/claude_code/edicao-criativos/ads-gen/data/video/38c072c2-93ca-408f-aa11-4032a7232747/hook_2_v1.mp4
+2026-02-23 09:19:04 info: [VIDEO_SCENE] Processing scene [HOOK] ordem 3
+2026-02-23 09:19:04 info: [VIDEO_GEN] Generating text-to-video with Kling v2 (5s, 9:16)
+2026-02-23 09:21:34 info: [VIDEO_GEN_SUCCESS] Text-to-video generated: https://v3b.fal.media/files/b/0a8fa0a1/AYBzi2RgCzMLmZ-XjuI_X_output.mp4
+2026-02-23 09:21:35 info: [VIDEO_DOWNLOAD] Video downloaded to: /Users/thierresavio/Documents/vibe_coding/VS CODE/claude_code/edicao-criativos/ads-gen/data/video/38c072c2-93ca-408f-aa11-4032a7232747/hook_3_v1.mp4
+2026-02-23 09:21:36 info: [VIDEO_SCENE] Processing scene [BODY] ordem 99
+2026-02-23 09:21:36 info: [VIDEO_GEN] Generating text-to-video with Kling v2 (5s, 9:16)
+2026-02-23 09:24:21 info: [VIDEO_GEN_SUCCESS] Text-to-video generated: https://v3b.fal.media/files/b/0a8fa0b1/I8G4EWAHKrnLJF2SrC6sy_output.mp4
+2026-02-23 09:24:22 info: [VIDEO_DOWNLOAD] Video downloaded to: /Users/thierresavio/Documents/vibe_coding/VS CODE/claude_code/edicao-criativos/ads-gen/data/video/38c072c2-93ca-408f-aa11-4032a7232747/body_99_v1.mp4
+2026-02-23 09:24:23 info: [VIDEO_COMPLETE] Video pipeline complete. 4 videos generated.
+2026-02-23 09:26:40 info: [MIGRATION] Running cost tracking migration...
+2026-02-23 09:26:40 info: [MIGRATION_SUCCESS] Cost tracking migration complete.
+2026-02-23 09:43:45 info: [TEST_START] Initializing Storyboard Agent Test...
+2026-02-23 09:43:45 info: [TEST_SETUP] Targeting Latest Briefing ID: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:44:28 info: [TEST_START] Initializing Storyboard Agent Test...
+2026-02-23 09:44:29 info: [TEST_SETUP] Targeting Latest Briefing ID: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:44:29 info: [TEST_EXECUTION] Executing the Storyboard Agent (visual scene generation)...
+2026-02-23 09:44:29 info: [STORYBOARD_START] Starting Storyboard Agent for Briefing 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:44:29 info: [STORYBOARD_IMAGINE] Imagining visual scene [HOOK] ID: ec3ed22f-e8dc-4f3d-a519-8d91eabf3186
+2026-02-23 09:44:29 info: [AI_PROVIDER] Trying AI provider: openai
+2026-02-23 09:44:36 info: [AI_PROVIDER] Success with provider: openai
+2026-02-23 09:44:36 info: [STORYBOARD_IMAGINE] Imagining visual scene [HOOK] ID: c6795556-5219-4f85-bc77-218e3b0a1320
+2026-02-23 09:44:36 info: [AI_PROVIDER] Trying AI provider: openai
+2026-02-23 09:44:45 info: [AI_PROVIDER] Success with provider: openai
+2026-02-23 09:44:45 info: [STORYBOARD_IMAGINE] Imagining visual scene [HOOK] ID: 923b0361-b3e2-4fdc-a3bb-b05d350bc1ad
+2026-02-23 09:44:45 info: [AI_PROVIDER] Trying AI provider: openai
+2026-02-23 09:44:52 info: [AI_PROVIDER] Success with provider: openai
+2026-02-23 09:44:52 info: [STORYBOARD_IMAGINE] Imagining visual scene [BODY] ID: 03fb5f98-554f-43e5-ae85-7cdaeee8483b
+2026-02-23 09:44:52 info: [AI_PROVIDER] Trying AI provider: openai
+2026-02-23 09:44:59 info: [AI_PROVIDER] Success with provider: openai
+2026-02-23 09:44:59 info: [STORYBOARD_SUCCESS] Storyboard Agent finished. 4 scenes updated.
+2026-02-23 09:44:59 info: [TEST_VALIDATION] ✅ Storyboard completed! Validating Supabase persistence...
+2026-02-23 09:48:59 info: [TEST_START] Initializing Avatar Agent Test...
+2026-02-23 09:48:59 info: [TEST_SETUP] Targeting Briefing ID: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:48:59 info: [TEST_EXECUTION] Running Avatar Agent...
+2026-02-23 09:48:59 info: [AVATAR_AGENT_START] Starting Avatar Agent for Briefing 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:49:00 info: [AVATAR_ANALYSIS] Avatar needs: 2 characters identified
+2026-02-23 09:49:00 info: [AVATAR_PROCESS] Processing avatar: "Protagonista" (principal)
+2026-02-23 09:49:00 info: [AVATAR_MATCH] Searching for reusable avatar (threshold: 70%)
+2026-02-23 09:49:00 info: [AVATAR_MATCH_EMPTY] No reusable avatars found in library.
+2026-02-23 09:49:00 info: [AVATAR_PROMPT] Building avatar prompt for type: principal
+2026-02-23 09:49:00 info: [AI_PROVIDER] Trying AI provider: openai
+2026-02-23 09:49:05 info: [AI_PROVIDER] Success with provider: openai
+2026-02-23 09:49:05 info: [AVATAR_PROMPT_OK] Avatar prompt built (854 chars)
+2026-02-23 09:49:05 info: [AVATAR_GENERATE] Generating avatar image via Gemini...
+2026-02-23 09:49:06 warn: [AVATAR_GEN_FALLBACK] Gemini image gen failed: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Model does not support the requested response modalities: image,text. Using placeholder approach.
+2026-02-23 09:49:06 info: [AVATAR_PROMPT_ONLY] Using prompt-only mode (no image generated). Prompt saved.
+2026-02-23 09:49:06 info: [AVATAR_PROCESS] Processing avatar: "Amiga" (amiga)
+2026-02-23 09:49:06 info: [AVATAR_MATCH] Searching for reusable avatar (threshold: 70%)
+2026-02-23 09:49:06 info: [AVATAR_MATCH_MISS] No avatar match above 70%. Best was 25.0%
+2026-02-23 09:49:06 info: [AVATAR_PROMPT] Building avatar prompt for type: amiga
+2026-02-23 09:49:06 info: [AI_PROVIDER] Trying AI provider: openai
+2026-02-23 09:49:09 info: [AI_PROVIDER] Success with provider: openai
+2026-02-23 09:49:09 info: [AVATAR_PROMPT_OK] Avatar prompt built (778 chars)
+2026-02-23 09:49:09 info: [AVATAR_GENERATE] Generating avatar image via Gemini...
+2026-02-23 09:49:09 warn: [AVATAR_GEN_FALLBACK] Gemini image gen failed: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [400 Bad Request] Model does not support the requested response modalities: text,image. Using placeholder approach.
+2026-02-23 09:49:09 info: [AVATAR_PROMPT_ONLY] Using prompt-only mode (no image generated). Prompt saved.
+2026-02-23 09:49:10 info: [AVATAR_AGENT_OK] Avatar Agent complete. 2 avatars processed.
+2026-02-23 09:50:48 info: [TEST_START] Initializing Avatar Agent Test...
+2026-02-23 09:50:48 info: [TEST_SETUP] Targeting Briefing ID: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:50:48 info: [TEST_EXECUTION] Running Avatar Agent...
+2026-02-23 09:50:48 info: [AVATAR_AGENT_START] Starting Avatar Agent for Briefing 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:50:49 info: [AVATAR_ANALYSIS] Avatar needs: 2 characters identified
+2026-02-23 09:50:49 info: [AVATAR_PROCESS] Processing avatar: "Protagonista" (principal)
+2026-02-23 09:50:49 info: [AVATAR_MATCH] Searching for reusable avatar (threshold: 70%)
+2026-02-23 09:50:49 info: [AVATAR_MATCH_HIT] Avatar match found! "Protagonista" (score: 100.0%)
+2026-02-23 09:50:50 info: [AVATAR_REUSE] Reusing existing avatar: Protagonista (c1b8275e-7868-4208-be87-fed8a507ca3b)
+2026-02-23 09:50:50 info: [AVATAR_PROCESS] Processing avatar: "Amiga" (amiga)
+2026-02-23 09:50:50 info: [AVATAR_MATCH] Searching for reusable avatar (threshold: 70%)
+2026-02-23 09:50:50 info: [AVATAR_MATCH_HIT] Avatar match found! "Amiga" (score: 100.0%)
+2026-02-23 09:50:50 info: [AVATAR_REUSE] Reusing existing avatar: Amiga (ed869a6d-ed1a-401d-9e27-ced0a3fd2e34)
+2026-02-23 09:50:50 info: [AVATAR_AGENT_OK] Avatar Agent complete. 2 avatars processed.
+2026-02-23 09:51:25 info: [TEST_START] Initializing Avatar Agent Test...
+2026-02-23 09:51:25 info: [TEST_SETUP] Targeting Briefing ID: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:51:25 info: [TEST_EXECUTION] Running Avatar Agent...
+2026-02-23 09:51:25 info: [AVATAR_AGENT_START] Starting Avatar Agent for Briefing 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 09:51:26 info: [AVATAR_ANALYSIS] Avatar needs: 2 characters identified
+2026-02-23 09:51:26 info: [AVATAR_PROCESS] Processing avatar: "Protagonista" (principal)
+2026-02-23 09:51:26 info: [AVATAR_MATCH] Searching for reusable avatar (threshold: 70%)
+2026-02-23 09:51:26 info: [AVATAR_MATCH_EMPTY] No reusable avatars found in library.
+2026-02-23 09:51:26 info: [AVATAR_PROMPT] Building avatar prompt for type: principal
+2026-02-23 09:51:26 info: [AI_PROVIDER] Trying AI provider: openai
+2026-02-23 09:51:29 info: [AI_PROVIDER] Success with provider: openai
+2026-02-23 09:51:29 info: [AVATAR_PROMPT_OK] Avatar prompt built (795 chars)
+2026-02-23 09:51:29 info: [AVATAR_GENERATE] Generating avatar image via FAL AI Flux...
+2026-02-23 09:51:36 info: [AVATAR_GEN_OK] Avatar image generated in 7.1s (144626 bytes)
+2026-02-23 09:51:36 info: [STORAGE_UPLOAD] Uploading avatar to Storage: avatares/avatar_principal_506305ad.png
+2026-02-23 09:51:37 info: [STORAGE_OK] Avatar uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/avatares/avatar_principal_506305ad.png
+2026-02-23 09:51:38 info: [AVATAR_PROCESS] Processing avatar: "Amiga" (amiga)
+2026-02-23 09:51:38 info: [AVATAR_MATCH] Searching for reusable avatar (threshold: 70%)
+2026-02-23 09:51:38 info: [AVATAR_MATCH_MISS] No avatar match above 70%. Best was 25.0%
+2026-02-23 09:51:38 info: [AVATAR_PROMPT] Building avatar prompt for type: amiga
+2026-02-23 09:51:38 info: [AI_PROVIDER] Trying AI provider: openai
+2026-02-23 09:51:43 info: [AI_PROVIDER] Success with provider: openai
+2026-02-23 09:51:43 info: [AVATAR_PROMPT_OK] Avatar prompt built (743 chars)
+2026-02-23 09:51:43 info: [AVATAR_GENERATE] Generating avatar image via FAL AI Flux...
+2026-02-23 09:51:49 info: [AVATAR_GEN_OK] Avatar image generated in 5.8s (163702 bytes)
+2026-02-23 09:51:49 info: [STORAGE_UPLOAD] Uploading avatar to Storage: avatares/avatar_amiga_f9e4266b.png
+2026-02-23 09:51:50 info: [STORAGE_OK] Avatar uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/avatares/avatar_amiga_f9e4266b.png
+2026-02-23 09:51:50 info: [AVATAR_AGENT_OK] Avatar Agent complete. 2 avatars processed.
+2026-02-23 10:02:41 info: [TEST_START] Initializing Animation Test (1 scene, 2 variations)...
+2026-02-23 10:02:41 info: [TEST_SETUP] Briefing: 38c072c2-93ca-408f-aa11-4032a7232747
+2026-02-23 10:02:42 info: [TEST_SCENE] Scene: [HOOK 1] | Avatar: Protagonista
+2026-02-23 10:02:42 info: [TEST_PROMPT] Prompt: A 40-year-old Hispanic woman in a messy kitchen gently holds her friend's hand, looking deeply into ...
+2026-02-23 10:02:42 info: [TEST_GEN] 
+--- Generating v1 ---
+2026-02-23 10:02:44 info: [ANIMATOR_SKIP] [Animator] Skipping Helix — not configured
+2026-02-23 10:02:44 info: [ANIMATOR_SKIP] [Animator] Skipping Runway — not configured
+2026-02-23 10:02:44 info: [ANIMATOR_TRY] [Animator] Trying FAL Kling...
+2026-02-23 10:02:44 info: [KLING_ANIMATE] [Kling] Starting image-to-video animation
+2026-02-23 10:05:48 error: [DAL] Database error during logApiUsage: Could not find the 'briefingId' column of 'api_usage_logs' in the schema cache
+2026-02-23 10:05:48 info: [KLING_DONE] [Kling] Video ready: /Users/thierresavio/Documents/vibe_coding/VS CODE/claude_code/edicao-criativos/ads-gen/data/video/38c072c2-93ca-408f-aa11-4032a7232747/kling_1771851947409.mp4 (183.7s)
+2026-02-23 10:05:48 info: [ANIMATOR_SUCCESS] [Animator] ✅ Success with FAL Kling
+2026-02-23 10:05:49 info: [TEST_GEN] 
+--- Generating v2 ---
+2026-02-23 10:05:49 info: [ANIMATOR_SKIP] [Animator] Skipping Helix — not configured
+2026-02-23 10:05:49 info: [ANIMATOR_SKIP] [Animator] Skipping Runway — not configured
+2026-02-23 10:05:49 info: [ANIMATOR_TRY] [Animator] Trying FAL Kling...
+2026-02-23 10:05:49 info: [KLING_ANIMATE] [Kling] Starting image-to-video animation
+2026-02-23 10:06:14 warn: [ANIMATOR_FALLBACK] [Animator] FAL Kling failed: Forbidden. Trying next...
+2026-02-23 10:06:14 info: [ANIMATOR_TRY] [Animator] Trying OpenAI Sora...
+2026-02-23 10:06:14 info: [SORA_ANIMATE] [Sora] Starting image-to-video animation
+2026-02-23 10:06:14 error: [SORA_ERROR] [Sora] Failed: 400 Invalid value: 'video_generation'. Supported values are: 'code_interpreter', 'function', 'file_search', 'web_search_preview', 'web_search_preview_2025_03_11', 'image_generation', 'mcp', 'custom', 'computer_use_preview', 'shell', and 'apply_patch'.
+2026-02-23 10:06:14 warn: [ANIMATOR_FALLBACK] [Animator] OpenAI Sora failed: 400 Invalid value: 'video_generation'. Supported values are: 'code_interpreter', 'function', 'file_search', 'web_search_preview', 'web_search_preview_2025_03_11', 'image_generation', 'mcp', 'custom', 'computer_use_preview', 'shell', and 'apply_patch'.. Trying next...
+2026-02-23 10:06:14 info: [ANIMATOR_TRY] [Animator] Trying Google Veo...
+2026-02-23 10:06:14 info: [VEO_ANIMATE] [Veo] Starting Veo 2 animation
+2026-02-23 10:06:15 error: [VEO_ERROR] [Veo] Failed: Request failed with status code 400
+2026-02-23 10:06:15 warn: [ANIMATOR_FALLBACK] [Animator] Google Veo failed: Request failed with status code 400. Trying next...
+2026-02-23 10:06:15 error: [TEST_GEN_ERR] v2 failed: All animation providers failed. Check API keys and quotas.
+2026-02-23 10:06:15 info: [TEST_SELECT] 
+--- Selection Phase ---
+2026-02-23 10:06:15 info: [SELECTOR_SINGLE] Only 1 variation. Auto-selecting.
+2026-02-23 10:06:16 info: [STORAGE_UPLOAD] Uploading video to Storage: videos/38c072c2-93ca-408f-aa11-4032a7232747/hook_1_v1_selected.mp4
+2026-02-23 10:06:18 info: [STORAGE_OK] Video uploaded: https://wbrvsnkwtwfotcewqcmi.supabase.co/storage/v1/object/public/assets/videos/38c072c2-93ca-408f-aa11-4032a7232747/hook_1_v1_selected.mp4

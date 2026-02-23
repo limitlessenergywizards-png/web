@@ -68,8 +68,21 @@ DESCRIÇÃO PRÉVIA: ${cena.descricao_visual}
                     descricao_visual: JSON.stringify(validatedData)
                 });
 
-                // Add generated prompt to library
-                const categoria = cena.sentimento ? cena.sentimento.toLowerCase().trim() : 'geral';
+                // Infer visual category from the AI's acao_principal
+                const acaoLower = validatedData.acao_principal.toLowerCase();
+                const CATEGORIA_MAP = [
+                    { words: ['sorri', 'sorriso', 'smile', 'ri'], cat: 'sorriso' },
+                    { words: ['olha', 'olhar', 'look', 'mira', 'eyes'], cat: 'olhar' },
+                    { words: ['caminh', 'anda', 'walk', 'passos'], cat: 'caminhada' },
+                    { words: ['chora', 'lágrima', 'cry', 'tear'], cat: 'emocao' },
+                    { words: ['fala', 'conversa', 'talk', 'speak'], cat: 'fala' },
+                    { words: ['toca', 'pega', 'segura', 'hold', 'touch'], cat: 'toque' },
+                    { words: ['espelho', 'mirror', 'reflexo'], cat: 'espelho' },
+                    { words: ['suspira', 'respira', 'sigh', 'breath'], cat: 'suspiro' },
+                ];
+                const matched = CATEGORIA_MAP.find(c => c.words.some(w => acaoLower.includes(w)));
+                const categoria = matched?.cat || cena.sentimento?.toLowerCase().trim() || 'geral';
+
                 try {
                     await inserirPrompt({
                         tipo: 'animacao',
