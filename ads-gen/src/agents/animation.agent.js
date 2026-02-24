@@ -115,6 +115,7 @@ export const animationAgent = {
                 } catch (err) {
                     logger.error(`[${cena.tipo.toUpperCase()} ${cena.ordem}] ${varLabel} — Failed: ${err.message}`, { phase: 'ANIM_JOB_ERROR' });
                     await atualizarStatusVideo(videoRecord.id, 'erro', null).catch(() => { });
+                    throw err; // STRICT: Reject the promise so p-queue propagates the failure upwards to the batch processor
                 }
             };
 

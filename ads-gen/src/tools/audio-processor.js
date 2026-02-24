@@ -1,7 +1,7 @@
-import ffmpeg from 'fluent-ffmpeg';
 import fs from 'fs-extra';
 import path from 'path';
 import { logger } from '../utils/logger.js';
+import { runRendiJob, downloadFromRendi } from '../utils/rendi-client.js';
 
 /**
  * Remove background noise from audio using FFmpeg afftdn filter
@@ -9,30 +9,21 @@ import { logger } from '../utils/logger.js';
  * @param {string} outputPath - Path for cleaned output
  * @returns {string} outputPath
  */
-export function removeBackgroundNoise(inputPath, outputPath) {
-    return new Promise((resolve, reject) => {
-        logger.info(`[AudioProc] Removing noise: ${path.basename(inputPath)}`, { phase: 'AUDIO_DENOISE' });
+export async function removeBackgroundNoise(inputUrl, outputPath) {
+    logger.info(`[AudioProc] Removing noise (Cloud): ${path.basename(outputPath)}`, { phase: 'AUDIO_DENOISE' });
 
-        fs.ensureDirSync(path.dirname(outputPath));
+    // Ensure audio filters are sent wrapped inside double quotes (or properly escaped) 
+    const cmd = `-i {{in_1}} -af "afftdn=nf=-25, equalizer=f=200:t=h:width=100:g=-3, equalizer=f=8000:t=h:width=2000:g=-2, acompressor=threshold=-20dB:ratio=3:attack=5:release=50" {{out_1}}`;
 
-        ffmpeg(inputPath)
-            .audioFilters([
-                'afftdn=nf=-25',                           // Adaptive noise reduction
-                'equalizer=f=200:t=h:width=100:g=-3',      // Cut low rumble
-                'equalizer=f=8000:t=h:width=2000:g=-2',    // Reduce high hiss
-                'acompressor=threshold=-20dB:ratio=3:attack=5:release=50'  // Light compression
-            ])
-            .output(outputPath)
-            .on('end', () => {
-                logger.info(`[AudioProc] Noise removed: ${path.basename(outputPath)}`, { phase: 'AUDIO_DENOISE_OK' });
-                resolve(outputPath);
-            })
-            .on('error', (err) => {
-                logger.error(`[AudioProc] Denoise failed: ${err.message}`, { phase: 'AUDIO_DENOISE_ERR' });
-                reject(err);
-            })
-            .run();
-    });
+    const results = await runRendiJob(
+        { in_1: inputUrl },
+        { out_1: path.basename(outputPath) },
+        cmd
+    );
+
+    if (!results.out_1) throw new Error('Rendi failed to yield denoised audio URL');
+
+    return downloadFromRendi(results.out_1, outputPath);
 }
 
 /**
@@ -42,29 +33,20 @@ export function removeBackgroundNoise(inputPath, outputPath) {
  * @param {number} targetDb - Target integrated loudness in LUFS (default: -16)
  * @returns {string} outputPath
  */
-export function normalizeVolume(inputPath, outputPath, targetDb = -16) {
-    return new Promise((resolve, reject) => {
-        logger.info(`[AudioProc] Normalizing to ${targetDb} LUFS: ${path.basename(inputPath)}`, { phase: 'AUDIO_NORM' });
+export async function normalizeVolume(inputUrl, outputPath, targetDb = -16) {
+    logger.info(`[AudioProc] Normalizing to ${targetDb} LUFS (Cloud): ${path.basename(outputPath)}`, { phase: 'AUDIO_NORM' });
 
-        fs.ensureDirSync(path.dirname(outputPath));
+    const cmd = `-i {{in_1}} -af "loudnorm=I=${targetDb}:TP=-1.5:LRA=11" -c:a libmp3lame -b:a 192k {{out_1}}`;
 
-        ffmpeg(inputPath)
-            .audioFilters([
-                `loudnorm=I=${targetDb}:TP=-1.5:LRA=11:print_format=summary`
-            ])
-            .audioCodec('libmp3lame')
-            .audioBitrate('192k')
-            .output(outputPath)
-            .on('end', () => {
-                logger.info(`[AudioProc] Normalized: ${path.basename(outputPath)}`, { phase: 'AUDIO_NORM_OK' });
-                resolve(outputPath);
-            })
-            .on('error', (err) => {
-                logger.error(`[AudioProc] Normalize failed: ${err.message}`, { phase: 'AUDIO_NORM_ERR' });
-                reject(err);
-            })
-            .run();
-    });
+    const results = await runRendiJob(
+        { in_1: inputUrl },
+        { out_1: path.basename(outputPath) },
+        cmd
+    );
+
+    if (!results.out_1) throw new Error('Rendi failed to yield normalized audio URL');
+
+    return downloadFromRendi(results.out_1, outputPath);
 }
 
 /**
@@ -72,17 +54,32 @@ export function normalizeVolume(inputPath, outputPath, targetDb = -16) {
  * @param {string} filePath - Path to audio file
  * @returns {number} Duration in seconds
  */
-export function getAudioDuration(filePath) {
-    return new Promise((resolve, reject) => {
-        ffmpeg.ffprobe(filePath, (err, metadata) => {
-            if (err) {
-                logger.error(`[AudioProc] ffprobe failed: ${err.message}`, { phase: 'AUDIO_PROBE_ERR' });
-                return reject(err);
-            }
-            const duration = metadata.format?.duration || 0;
-            resolve(parseFloat(duration));
+export async function getAudioDuration(inputUrl) {
+    try {
+        // As a fast alternative to running ffprobe locally or over Rendi just for metadata,
+        // ElevenLabs and TTS systems already yield accurate characters, or if strictly needed,
+        // we can dynamically parse Rendi's stats. For now, since it was using Local FFprobe,
+        // we replace it with `music-metadata` or a light HTTP Header read if it's a known URL.
+        // For simplicity during the Cloud Migration, if this is called, we will execute a dummy Rendi Job
+        // that copies 1s just to parse, OR better, we use local ffprobe only if file is local.
+
+        // *IMPORTANT*: Since the project specifically asks to remove fluent-ffmpeg, we should use
+        // standard Node `fs` / `axios` to read the duration, or assume duration is calculable from ElevenLabs. 
+        // For audio downloaded:
+        const { parseBuffer } = await import('music-metadata');
+        const { default: axios } = await import('axios');
+
+        // Fetch first 256kb to get metadata (sufficient for mp3 headers)
+        const response = await axios.get(inputUrl, {
+            responseType: 'arraybuffer',
+            headers: { 'Range': 'bytes=0-256000' }
         });
-    });
+        const meta = await parseBuffer(Buffer.from(response.data), 'audio/mpeg');
+        return meta.format.duration || 0;
+    } catch (err) {
+        logger.warn(`[AudioProc] Audio duration inference failed: ${err.message}`, { phase: 'AUDIO_PROBE_WARN' });
+        return 0; // Fallback
+    }
 }
 
 /**
@@ -91,30 +88,21 @@ export function getAudioDuration(filePath) {
  * @param {string} outputPath
  * @param {number} factor - Speed factor (e.g., 1.1 = 10% faster, 0.9 = 10% slower)
  */
-export function adjustSpeed(inputPath, outputPath, factor) {
-    return new Promise((resolve, reject) => {
-        logger.info(`[AudioProc] Adjusting speed ×${factor}: ${path.basename(inputPath)}`, { phase: 'AUDIO_SPEED' });
+export async function adjustSpeed(inputUrl, outputPath, factor) {
+    logger.info(`[AudioProc] Adjusting speed ×${factor} (Cloud): ${path.basename(outputPath)}`, { phase: 'AUDIO_SPEED' });
 
-        fs.ensureDirSync(path.dirname(outputPath));
+    const clampedFactor = Math.max(0.5, Math.min(2.0, factor));
+    const cmd = `-i {{in_1}} -af "atempo=${clampedFactor}" -c:a libmp3lame -b:a 192k {{out_1}}`;
 
-        // atempo filter accepts 0.5–2.0 range
-        const clampedFactor = Math.max(0.5, Math.min(2.0, factor));
+    const results = await runRendiJob(
+        { in_1: inputUrl },
+        { out_1: path.basename(outputPath) },
+        cmd
+    );
 
-        ffmpeg(inputPath)
-            .audioFilters([`atempo=${clampedFactor}`])
-            .audioCodec('libmp3lame')
-            .audioBitrate('192k')
-            .output(outputPath)
-            .on('end', () => {
-                logger.info(`[AudioProc] Speed adjusted: ${path.basename(outputPath)}`, { phase: 'AUDIO_SPEED_OK' });
-                resolve(outputPath);
-            })
-            .on('error', (err) => {
-                logger.error(`[AudioProc] Speed adjust failed: ${err.message}`, { phase: 'AUDIO_SPEED_ERR' });
-                reject(err);
-            })
-            .run();
-    });
+    if (!results.out_1) throw new Error('Rendi failed to yield speed adjusted audio URL');
+
+    return downloadFromRendi(results.out_1, outputPath);
 }
 
 export default { removeBackgroundNoise, normalizeVolume, getAudioDuration, adjustSpeed };

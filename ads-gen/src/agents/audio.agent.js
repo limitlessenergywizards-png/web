@@ -105,8 +105,12 @@ export const audioAgent = {
                         totalChars += ttsResult.chars;
                         totalCost += ttsResult.cost;
 
-                        // 2. Normalize volume → another temp file
-                        await normalizeVolume(rawTmp, normTmp, targetDb);
+                        // 1.5 Upload raw audio to Supabase so Rendi can access it via URL
+                        const rawFileName = `${briefingId}/raw_${cena.tipo}_${cena.ordem}.mp3`;
+                        const rawUploaded = await uploadAudio(rawTmp, rawFileName);
+
+                        // 2. Normalize volume (Cloud via Rendi) → writes back to normTmp
+                        await normalizeVolume(rawUploaded.url, normTmp, targetDb);
 
                         // 3. Get duration
                         const duracao = await getAudioDuration(normTmp);

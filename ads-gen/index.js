@@ -9,10 +9,12 @@ import creativePipeline from './src/pipelines/creative-pipeline.js';
 import batchProcessor from './src/pipelines/batch-processor.js';
 import { criarProjeto, criarBriefing, buscarProjeto, buscarBriefing, listarUsagePorProjeto } from './src/db/dal.js';
 import { runAuthServer } from './src/tools/drive-uploader.js';
+import { validateEnv } from './src/utils/env-validator.js';
 
 // ... (other imports remain, just updating the destructuring at the top and the commands at the bottom)
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });
+validateEnv(); // [ROUTE SENTINEL] Bloqueia engine start se faltar API key essencial
 
 const program = new Command();
 

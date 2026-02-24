@@ -118,7 +118,17 @@ export async function uploadCreativo(localPath, nomeArquivo, parentFolderId = nu
 
     if (!folderId) throw new Error('GOOGLE_DRIVE_FOLDER_ID not set');
 
-    logger.info(`[Drive] Uploading: ${nomeArquivo}`, { phase: 'DRIVE_UPLOAD' });
+    // [ROUTE SENTINEL GUARDIAN] Check if folder exists before blindly uploading
+    try {
+        await drive.files.get({ fileId: folderId, fields: 'id' });
+    } catch (e) {
+        if (e.status === 404) {
+            throw new Error(`[ASAVIA ROUTE SENTINEL] P0: GOOGLE_DRIVE_FOLDER_ID '${folderId}' não existe no Drive destino ou a Service Account carece de permissões. Falha de Contract interceptada.`);
+        }
+        throw new Error(`[Drive Contract] Erro ao validar a pasta pai: ${e.message}`);
+    }
+
+    logger.info(`[Drive] Uploading: ${nomeArquivo} to folder ${folderId}`, { phase: 'DRIVE_UPLOAD' });
 
     const fileSize = (await fs.stat(localPath)).size;
 
@@ -243,42 +253,49 @@ export async function uploadTodos(briefingId, opts = {}) {
     const dateFolderId = await criarSubpasta(produtoFolderId, new Date().toISOString().slice(0, 10));
 
     // Get all ready creatives
-    const { data: criativos } = await supabase
+    const { data: criativos, error: errCriativos } = await supabase
         .from('criativos_finais')
         .select('*')
         .eq('briefing_id', briefingId)
         .eq('status', 'pronto');
 
-    if (!criativos?.length) {
-        logger.warn(`[Drive] No ready creatives for ${briefingId}`, { phase: 'DRIVE_WARN' });
-        return [];
+    if (errCriativos) {
+        logger.error(`[Drive] Failed to query creatives: ${errCriativos.message}`);
+        throw new Error(`Database failure looking for creatives: ${errCriativos.message}`);
     }
 
-    const results = [];
-    for (const criativo of criativos) {
-        try {
-            const { fileId, webViewLink } = await uploadFromUrl(
-                criativo.arquivo_path,
-                criativo.nome_arquivo,
-                dateFolderId
-            );
-
-            // Update DB with Drive URL
-            await atualizarDriveUrl(criativo.id, webViewLink, fileId);
-
-            results.push({
-                hookNum: criativo.hook_numero,
-                driveUrl: webViewLink,
-                fileId,
-                fileName: criativo.nome_arquivo,
-            });
-        } catch (error) {
-            logger.error(`[Drive] Failed: ${criativo.nome_arquivo} — ${error.message}`, { phase: 'DRIVE_ERR' });
-        }
+    if (!criativos || criativos.length === 0) {
+        throw new Error(`Pipeline concluiu mas 0 criativos finais encontrados em status 'pronto' para upload`);
     }
+    logger.warn(`[Drive] No ready creatives for ${briefingId}`, { phase: 'DRIVE_WARN' });
+    return [];
+}
 
-    logger.info(`[Drive] ✅ Uploaded ${results.length}/${criativos.length} creatives`, { phase: 'DRIVE_DONE' });
-    return results;
+const results = [];
+for (const criativo of criativos) {
+    try {
+        const { fileId, webViewLink } = await uploadFromUrl(
+            criativo.arquivo_path,
+            criativo.nome_arquivo,
+            dateFolderId
+        );
+
+        // Update DB with Drive URL
+        await atualizarDriveUrl(criativo.id, webViewLink, fileId);
+
+        results.push({
+            hookNum: criativo.hook_numero,
+            driveUrl: webViewLink,
+            fileId,
+            fileName: criativo.nome_arquivo,
+        });
+    } catch (error) {
+        logger.error(`[Drive] Failed: ${criativo.nome_arquivo} — ${error.message}`, { phase: 'DRIVE_ERR' });
+    }
+}
+
+logger.info(`[Drive] ✅ Uploaded ${results.length}/${criativos.length} creatives`, { phase: 'DRIVE_DONE' });
+return results;
 }
 
 export default { uploadCreativo, uploadFromUrl, criarSubpasta, getShareableUrl, uploadTodos, getAuthUrl, runAuthServer };

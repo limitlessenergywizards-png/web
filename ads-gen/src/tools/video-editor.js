@@ -1,19 +1,8 @@
 import ffmpeg from 'fluent-ffmpeg';
 import fs from 'fs-extra';
-import os from 'os';
 import path from 'path';
 import { logger } from '../utils/logger.js';
-
-// Helper: create a temp file path
-const tmpFile = (ext) => path.join(os.tmpdir(), `adsgen_${Date.now()}_${Math.random().toString(36).slice(2)}${ext}`);
-
-// Helper: promisified ffmpeg run
-const runFF = (cmd, label) => new Promise((resolve, reject) => {
-    cmd
-        .on('end', () => { logger.info(`[VideoEditor] ✅ ${label}`, { phase: 'VIDEO_EDIT_OK' }); resolve(); })
-        .on('error', (err) => { logger.error(`[VideoEditor] ❌ ${label}: ${err.message}`, { phase: 'VIDEO_EDIT_ERR' }); reject(err); })
-        .run();
-});
+import { runRendiJob, downloadFromRendi } from '../utils/rendi-client.js';
 
 // Helper: get media duration
 export function getMediaDuration(filePath) {
@@ -26,76 +15,43 @@ export function getMediaDuration(filePath) {
 }
 
 /**
- * Remove audio track from video
+ * Remove audio track from video (Cloud)
  */
-export function removeAudio(inputPath, outputPath) {
-    logger.info(`[VideoEditor] Removing audio: ${path.basename(inputPath)}`, { phase: 'VIDEO_EDIT' });
-    fs.ensureDirSync(path.dirname(outputPath));
-    return runFF(
-        ffmpeg(inputPath).noAudio().videoCodec('copy').output(outputPath),
-        'removeAudio'
-    );
+export async function removeAudio(inputUrl, outputPath) {
+    logger.info(`[VideoEditor] Removing audio (Cloud): ${path.basename(outputPath)}`, { phase: 'VIDEO_EDIT' });
+    const cmd = `-i {{in_1}} -an -c:v copy {{out_1}}`;
+
+    const results = await runRendiJob({ in_1: inputUrl }, { out_1: path.basename(outputPath) }, cmd);
+    return results.out_1; // Return Cloud URL
 }
 
 /**
- * Combine video (muted) + narration audio.
- * Applies speed factor to video if needed (keeping audio pitch unchanged).
- * @param {string} videoPath - Path to video (will be muted)
- * @param {string} audioPath - Path to narration audio
- * @param {string} outputPath - Output path
- * @param {number} velocidadeFator - Speed factor for video (1.0 = normal)
+ * Combine video (muted) + narration audio (Cloud)
  */
-export function addNarration(videoPath, audioPath, outputPath, velocidadeFator = 1.0) {
-    logger.info(`[VideoEditor] Adding narration (speed ×${velocidadeFator}): ${path.basename(videoPath)}`, { phase: 'VIDEO_EDIT' });
-    fs.ensureDirSync(path.dirname(outputPath));
+export async function addNarration(videoUrl, audioUrl, outputPath, velocidadeFator = 1.0) {
+    logger.info(`[VideoEditor] Adding narration (speed ×${velocidadeFator} Cloud): ${path.basename(outputPath)}`, { phase: 'VIDEO_EDIT' });
 
-    const cmd = ffmpeg();
-
+    let cmd;
     if (velocidadeFator !== 1.0) {
-        // Speed up/slow down video without changing audio pitch
         const pts = (1 / velocidadeFator).toFixed(4);
-        cmd.input(videoPath)
-            .input(audioPath)
-            .complexFilter([
-                `[0:v]setpts=${pts}*PTS[v]`
-            ], ['v'])
-            .outputOptions([
-                '-map', '[v]',
-                '-map', '1:a',
-                '-shortest'
-            ]);
+        cmd = `-i {{in_1}} -i {{in_2}} -filter_complex "[0:v]setpts=${pts}*PTS[v]" -map "[v]" -map 1:a -shortest -c:v libx264 -c:a aac -b:a 192k -preset fast {{out_1}}`;
     } else {
-        cmd.input(videoPath)
-            .input(audioPath)
-            .outputOptions([
-                '-map', '0:v',
-                '-map', '1:a',
-                '-shortest'
-            ]);
+        cmd = `-i {{in_1}} -i {{in_2}} -map 0:v -map 1:a -shortest -c:v libx264 -c:a aac -b:a 192k -preset fast {{out_1}}`;
     }
 
-    cmd.videoCodec('libx264').audioCodec('aac').audioBitrate('192k')
-        .outputOptions(['-preset', 'fast'])
-        .output(outputPath);
-
-    return runFF(cmd, 'addNarration');
+    const results = await runRendiJob({ in_1: videoUrl, in_2: audioUrl }, { out_1: path.basename(outputPath) }, cmd);
+    return results.out_1; // Return Cloud URL
 }
 
 /**
- * Add subtitles to video using drawtext filter (no external SRT file needed).
- * Splits text into timed chunks displayed sequentially.
- * @param {string} videoPath
- * @param {string} texto - Full text for subtitles
- * @param {string} outputPath
- * @param {Object} opts - { fontSize, wordsPerChunk }
+ * Add subtitles to video using drawtext filter (Cloud)
  */
-export async function addSubtitles(videoPath, texto, outputPath, opts = {}) {
+export async function addSubtitles(videoUrl, texto, outputPath, opts = {}) {
     const { fontSize = 22, wordsPerChunk = 8 } = opts;
-    logger.info(`[VideoEditor] Adding subtitles (${texto.length} chars)`, { phase: 'VIDEO_EDIT' });
-    fs.ensureDirSync(path.dirname(outputPath));
+    logger.info(`[VideoEditor] Adding subtitles (${texto.length} chars Cloud)`, { phase: 'VIDEO_EDIT' });
 
     try {
-        const duration = await getMediaDuration(videoPath);
+        const duration = await getMediaDuration(videoUrl); // ffprobe reads https:// implicitly
         const words = texto.split(/\s+/);
         const chunks = [];
         for (let i = 0; i < words.length; i += wordsPerChunk) {
@@ -112,66 +68,47 @@ export async function addSubtitles(videoPath, texto, outputPath, opts = {}) {
                 .replace(/'/g, "\u2019")
                 .replace(/:/g, '\\:')
                 .replace(/%/g, '%%')
-                .replace(/\n/g, ' ');
+                .replace(/\n/g, ' ')
+                // ensure quotes are escaped properly for Rendi CLI
+                .replace(/"/g, '\\"');
 
+            // Using Arial (standard default on cloud servers typically)
             return `drawtext=text='${escaped}':fontsize=${fontSize}:fontcolor=white:borderw=2:bordercolor=black:font=Arial:x=(w-tw)/2:y=h-th-60:enable='between(t\\,${start}\\,${end})'`;
         });
 
-        const cmd = ffmpeg(videoPath)
-            .videoFilters(filters)
-            .videoCodec('libx264')
-            .audioCodec('copy')
-            .outputOptions(['-preset', 'fast'])
-            .output(outputPath);
+        const filterComplex = `-vf "${filters.join(', ')}"`;
+        const cmd = `-i {{in_1}} ${filterComplex} -c:v libx264 -c:a copy -preset fast {{out_1}}`;
 
-        await runFF(cmd, 'addSubtitles');
+        const results = await runRendiJob({ in_1: videoUrl }, { out_1: path.basename(outputPath) }, cmd);
+        return results.out_1; // Return Cloud URL
     } catch (err) {
-        // drawtext/subtitles filter not available — skip subtitles gracefully
-        logger.warn(`[VideoEditor] ⚠️ Subtitles not available (${err.message}). Install FFmpeg with --enable-libfreetype. Copying video without subtitles.`, { phase: 'VIDEO_EDIT_WARN' });
-        await fs.copy(videoPath, outputPath);
+        logger.warn(`[VideoEditor] ⚠️ Cloud Subtitles failed (${err.message}). Skipping.`, { phase: 'VIDEO_EDIT_WARN' });
+        // Return original URL
+        return videoUrl;
     }
 }
 
 /**
- * Mix narration + background music.
- * Music at -30dB relative to narration.
+ * Mix narration + background music (Cloud)
  */
-export function addBackgroundMusic(videoPath, musicPath, outputPath) {
-    logger.info(`[VideoEditor] Adding background music`, { phase: 'VIDEO_EDIT' });
-    fs.ensureDirSync(path.dirname(outputPath));
+export async function addBackgroundMusic(videoUrl, musicUrl, outputPath) {
+    logger.info(`[VideoEditor] Adding background music (Cloud): ${path.basename(outputPath)}`, { phase: 'VIDEO_EDIT' });
 
-    const cmd = ffmpeg()
-        .input(videoPath)
-        .input(musicPath)
-        .complexFilter([
-            '[0:a]volume=1.0[voice]',
-            '[1:a]volume=0.15[music]',
-            '[voice][music]amix=inputs=2:duration=first:dropout_transition=2[aout]'
-        ], ['aout'])
-        .outputOptions([
-            '-map', '0:v',
-            '-map', '[aout]'
-        ])
-        .videoCodec('copy')
-        .audioCodec('aac')
-        .audioBitrate('192k')
-        .output(outputPath);
+    const filterComplex = `-filter_complex "[0:a]volume=1.0[voice];[1:a]volume=0.15[music];[voice][music]amix=inputs=2:duration=first:dropout_transition=2[aout]"`;
+    const cmd = `-i {{in_1}} -i {{in_2}} ${filterComplex} -map 0:v -map "[aout]" -c:v copy -c:a aac -b:a 192k {{out_1}}`;
 
-    return runFF(cmd, 'addBackgroundMusic');
+    const results = await runRendiJob({ in_1: videoUrl, in_2: musicUrl }, { out_1: path.basename(outputPath) }, cmd);
+    return results.out_1; // Return Cloud URL
 }
 
 /**
- * Apply visual effect to video.
- * @param {string} videoPath
- * @param {'slide-left'|'zoom-in'|'fade-in'|'fade-out'} efeito
- * @param {string} outputPath
+ * Apply visual effect to video (Cloud)
  */
-export async function applyEffect(videoPath, efeito, outputPath) {
-    logger.info(`[VideoEditor] Applying effect: ${efeito}`, { phase: 'VIDEO_EDIT' });
-    fs.ensureDirSync(path.dirname(outputPath));
+export async function applyEffect(videoUrl, efeito, outputPath) {
+    logger.info(`[VideoEditor] Applying effect '${efeito}' (Cloud): ${path.basename(outputPath)}`, { phase: 'VIDEO_EDIT' });
 
     try {
-        const duration = await getMediaDuration(videoPath);
+        const duration = await getMediaDuration(videoUrl);
 
         let filter;
         switch (efeito) {
@@ -188,48 +125,29 @@ export async function applyEffect(videoPath, efeito, outputPath) {
                 filter = `zoompan=z='min(zoom+0.002,1.3)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=720x1280:fps=30`;
                 break;
             default:
-                // No effect — just re-encode
                 filter = 'null';
         }
 
-        const cmd = ffmpeg(videoPath)
-            .videoFilters([filter])
-            .videoCodec('libx264')
-            .audioCodec('copy')
-            .outputOptions(['-preset', 'fast'])
-            .output(outputPath);
+        const cmd = `-i {{in_1}} -vf "${filter}" -c:v libx264 -c:a copy -preset fast {{out_1}}`;
 
-        await runFF(cmd, `applyEffect(${efeito})`);
+        const results = await runRendiJob({ in_1: videoUrl }, { out_1: path.basename(outputPath) }, cmd);
+        return results.out_1; // Return Cloud URL
     } catch (err) {
-        logger.warn(`[VideoEditor] ⚠️ Effect '${efeito}' failed (${err.message}). Copying without effect.`, { phase: 'VIDEO_EDIT_WARN' });
-        await fs.copy(videoPath, outputPath);
+        logger.warn(`[VideoEditor] ⚠️ Effect '${efeito}' failed (${err.message}). Skipping effect.`, { phase: 'VIDEO_EDIT_WARN' });
+        return videoUrl;
     }
 }
 
 /**
- * Export final video with broadcast-ready settings.
- * Codec: H.264/AAC, 720×1280 (9:16), 30fps, 4000k video, 192k audio.
+ * Export final video with broadcast-ready settings (Cloud)
  */
-export function exportFinal(inputPath, outputPath) {
-    logger.info(`[VideoEditor] Exporting final: ${path.basename(inputPath)}`, { phase: 'VIDEO_EXPORT' });
-    fs.ensureDirSync(path.dirname(outputPath));
+export async function exportFinal(inputUrl, outputPath) {
+    logger.info(`[VideoEditor] Exporting final (Cloud): ${path.basename(outputPath)}`, { phase: 'VIDEO_EXPORT' });
 
-    const cmd = ffmpeg(inputPath)
-        .videoCodec('libx264')
-        .audioCodec('aac')
-        .size('720x1280')
-        .fps(30)
-        .videoBitrate('4000k')
-        .audioBitrate('192k')
-        .outputOptions([
-            '-preset', 'fast',
-            '-movflags', '+faststart',
-            '-pix_fmt', 'yuv420p',
-            '-aspect', '9:16'
-        ])
-        .output(outputPath);
+    const cmd = `-i {{in_1}} -c:v libx264 -c:a aac -s 720x1280 -r 30 -b:v 4000k -b:a 192k -preset fast -movflags +faststart -pix_fmt yuv420p -aspect 9:16 {{out_1}}`;
 
-    return runFF(cmd, 'exportFinal');
+    const results = await runRendiJob({ in_1: inputUrl }, { out_1: path.basename(outputPath) }, cmd);
+    return downloadFromRendi(results.out_1, outputPath);
 }
 
 // Format seconds to SRT timestamp: HH:MM:SS,mmm

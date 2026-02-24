@@ -2,7 +2,9 @@ import fs from 'fs-extra';
 import path from 'path';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import { API_CONTRACTS } from '../config/api-contracts.js';
 import { logger } from '../utils/logger.js';
+import { buscarAvatarAleatorio } from './avatar-matcher.js';
 import { logApiUsage } from '../db/dal.js';
 import { withRetry } from '../utils/retry.js';
 import { getModelById, getAvailableModels, TIER_DEFAULTS } from '../config/video-models.js';
@@ -118,10 +120,20 @@ async function executeOnAlibaba(model, imagePath, prompt, duracao, withAudio, co
     let videoUrl = null;
     while (Date.now() < timeout) {
         await new Promise(r => setTimeout(r, 15_000));
-        const pollResp = await axios.get(
-            `https://dashscope-us.aliyuncs.com/api/v1/tasks/${taskId}`,
-            { headers: { 'Authorization': `Bearer ${apiKey}` } }
-        );
+        let pollResp;
+        try {
+            const endpoint = API_CONTRACTS.alibaba.taskStatus(taskId);
+            pollResp = await axios.get(
+                endpoint,
+                { headers: { 'Authorization': `Bearer ${apiKey}` } }
+            );
+        } catch (pollErr) {
+            if (pollErr.response?.status === 404) {
+                throw new Error(`[ASAVIA ROUTE SENTINEL] P0: Alibaba Task '${taskId}' retornou 404. Parando polling infinito de endpoint inválido.`);
+            }
+            throw pollErr;
+        }
+
         const status = pollResp.data.output?.task_status;
         logger.info(`[Alibaba] Task ${taskId}: ${status}`, { phase: 'ALIBABA_POLL' });
         if (status === 'SUCCEEDED') {

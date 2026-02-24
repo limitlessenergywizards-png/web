@@ -6,10 +6,9 @@ import dotenv from 'dotenv';
 import { logger } from '../utils/logger.js';
 import { logApiUsage } from '../db/dal.js';
 import { withRetry } from '../utils/retry.js';
+import { API_CONTRACTS } from '../config/api-contracts.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });
-
-const API_BASE = 'https://api.elevenlabs.io/v1';
 
 function getHeaders() {
     const apiKey = process.env.ELEVENLABS_API_KEY;
@@ -40,8 +39,9 @@ export async function generateSpeech(texto, voiceId = null, config = {}) {
     const startTime = Date.now();
 
     try {
+        const endpoint = API_CONTRACTS.elevenlabs.tts(voice);
         const response = await withRetry(() => axios.post(
-            `${API_BASE}/text-to-speech/${voice}`,
+            endpoint,
             {
                 text: texto,
                 model_id,

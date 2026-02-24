@@ -102,85 +102,72 @@ export const editorAgent = {
                     continue;
                 }
 
-                // Download video to temp
-                const videoTmp = path.join(workDir, `${cena.id}_video.mp4`);
-                await downloadFromStorage(videoUrl, videoTmp);
-
                 // b) Get narration audio for this scene
                 const audioUrl = await getAudioUrl(cena.id);
                 const texto = getTextForScene(cena, copySections);
 
-                // c) Pipeline: removeAudio → addNarration → addSubtitles → applyEffect
-                let currentPath = videoTmp;
+                // c) Pipeline: removeAudio → addNarration → addSubtitles → applyEffect (Cloud-to-Cloud)
+                let currentUrl = videoUrl;
 
                 // Remove original audio
-                const mutedPath = path.join(workDir, `${cena.id}_muted.mp4`);
-                await removeAudio(currentPath, mutedPath);
-                currentPath = mutedPath;
+                currentUrl = await removeAudio(currentUrl, `${cena.id}_muted.mp4`);
 
                 // Add narration if available
                 if (audioUrl) {
-                    const audioTmp = path.join(workDir, `${cena.id}_narration.mp3`);
-                    await downloadFromStorage(audioUrl, audioTmp);
-
-                    const narratedPath = path.join(workDir, `${cena.id}_narrated.mp4`);
-                    await addNarration(currentPath, audioTmp, narratedPath);
-                    currentPath = narratedPath;
+                    currentUrl = await addNarration(currentUrl, audioUrl, `${cena.id}_narrated.mp4`);
                 }
 
                 // Add subtitles if text available
                 if (texto && texto.length > 5) {
-                    const subtitledPath = path.join(workDir, `${cena.id}_subtitled.mp4`);
-                    await addSubtitles(currentPath, texto, subtitledPath);
-                    currentPath = subtitledPath;
+                    currentUrl = await addSubtitles(currentUrl, texto, `${cena.id}_subtitled.mp4`);
                 }
 
                 // Apply visual effect
                 const effect = cena.tipo === 'hook' ? effectHook : effectBody;
-                const effectedPath = path.join(workDir, `${cena.id}_effected.mp4`);
-                await applyEffect(currentPath, effect, effectedPath);
-                currentPath = effectedPath;
+                currentUrl = await applyEffect(currentUrl, effect, `${cena.id}_effected.mp4`);
 
                 processedScenes[cena.id] = {
-                    path: currentPath,
+                    url: currentUrl,
                     tipo: cena.tipo,
                     ordem: cena.ordem,
-                    duration: await getMediaDuration(currentPath)
+                    duration: await getMediaDuration(currentUrl)
                 };
 
                 logger.info(`[Editor] ✅ ${cena.tipo.toUpperCase()} ${cena.ordem} processed (${processedScenes[cena.id].duration.toFixed(1)}s)`, { phase: 'EDITOR_SCENE_OK' });
             }
 
             // ─── Step 2: Concatenate body scenes ───
-            const bodyPaths = bodyCenas
-                .map(c => processedScenes[c.id]?.path)
+            const bodyUrls = bodyCenas
+                .map(c => processedScenes[c.id]?.url)
                 .filter(Boolean);
 
-            let bodyFinalPath = null;
-            if (bodyPaths.length > 0) {
-                bodyFinalPath = path.join(workDir, 'body_final.mp4');
-                await concatenateScenes(bodyPaths, bodyFinalPath);
-                logger.info(`[Editor] Body assembled: ${(await getMediaDuration(bodyFinalPath)).toFixed(1)}s`, { phase: 'EDITOR_BODY' });
+            let bodyFinalUrl = null;
+            if (bodyUrls.length > 0) {
+                bodyFinalUrl = await concatenateScenes(bodyUrls, 'body_final.mp4');
+                logger.info(`[Editor] Body assembled: ${(await getMediaDuration(bodyFinalUrl)).toFixed(1)}s`, { phase: 'EDITOR_BODY' });
             }
 
             // ─── Step 3: For each hook, assemble hook + body ───
             for (let i = 0; i < hooks.length; i++) {
                 const hook = hooks[i];
                 const hookScene = processedScenes[hook.id];
-                if (!hookScene || !bodyFinalPath) {
+                if (!hookScene || !bodyFinalUrl) {
                     logger.warn(`[Editor] Skipping hook ${hook.ordem} — missing scene or body`, { phase: 'EDITOR_SKIP' });
                     continue;
                 }
 
                 // Add background music if available
-                let finalBody = bodyFinalPath;
+                let finalBody = bodyFinalUrl;
                 if (includeMusic) {
                     const music = await selectMusic(categoryForSentiment(hook.sentimento));
                     if (music) {
-                        const musicBody = path.join(workDir, `body_music_h${hook.ordem}.mp4`);
                         try {
-                            await addBackgroundMusic(bodyFinalPath, music.path, musicBody);
-                            finalBody = musicBody;
+                            // Upload local music to cloud first if not already a URL
+                            const musicBuffer = await fs.readFile(music.path);
+                            const uploadedMusic = await uploadBuffer(musicBuffer, `assets/music_${path.basename(music.path)}`, 'audio/mpeg');
+
+                            const musicBody = `body_music_h${hook.ordem}.mp4`;
+                            finalBody = await addBackgroundMusic(bodyFinalUrl, uploadedMusic.url, musicBody);
                         } catch (e) {
                             logger.warn(`[Editor] Music failed: ${e.message}`, { phase: 'EDITOR_MUSIC_WARN' });
                         }
@@ -188,10 +175,7 @@ export const editorAgent = {
                 }
 
                 // Assemble creative: hook + body
-                const creativeDir = path.join(workDir, 'finais');
-                fs.ensureDirSync(creativeDir);
-
-                const creative = await assembleCreative(hookScene.path, finalBody, creativeDir, {
+                const creative = await assembleCreative(hookScene.url, finalBody, 'finais', {
                     produto: briefing.produto || 'criativo',
                     hookNum: hook.ordem,
                     version: 1
@@ -266,7 +250,7 @@ export const editorAgent = {
 // ─── Helpers ───
 
 async function getVideoUrl(cenaId) {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('assets_video')
         .select('arquivo_url')
         .eq('cena_id', cenaId)
@@ -274,11 +258,17 @@ async function getVideoUrl(cenaId) {
         .order('criado_em', { ascending: false })
         .limit(1)
         .single();
+
+    if (error) {
+        if (error.code === 'PGRST116') return null; // PGRST116 = JSON object requested, multiple (or no) rows returned.
+        logger.error(`[Editor] Supabase Error fetching video for scene ${cenaId}: ${error.message} - CODE: ${error.code}`);
+        throw new Error(`Database failure fetching video URL: ${error.message}`);
+    }
     return data?.arquivo_url || null;
 }
 
 async function getAudioUrl(cenaId) {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('assets_audio')
         .select('arquivo_path')
         .eq('cena_id', cenaId)
@@ -286,6 +276,12 @@ async function getAudioUrl(cenaId) {
         .order('criado_em', { ascending: false })
         .limit(1)
         .single();
+
+    if (error) {
+        if (error.code === 'PGRST116') return null;
+        logger.error(`[Editor] Supabase Error fetching audio for scene ${cenaId}: ${error.message} - CODE: ${error.code}`);
+        throw new Error(`Database failure fetching audio URL: ${error.message}`);
+    }
     return data?.arquivo_path || null;
 }
 

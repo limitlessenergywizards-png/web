@@ -44,7 +44,8 @@ export async function runHealthCheck() {
     const requiredVars = [
         'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY',
         'OPENAI_API_KEY', 'FAL_API_KEY', 'ELEVENLABS_API_KEY',
-        'GOOGLE_CLIENT_ID', 'GOOGLE_DRIVE_FOLDER_ID'
+        'GOOGLE_CLIENT_ID', 'GOOGLE_DRIVE_FOLDER_ID',
+        'API_KEY_RENDI_DEV'
     ];
 
     for (const v of requiredVars) {
@@ -60,15 +61,14 @@ export async function runHealthCheck() {
     if (process.env.ANTHROPIC_API_KEY) log(`  [INFO] ANTHROPIC_API_KEY configurada`, 'cyan');
     if (process.env.GEMINI_API_KEY) log(`  [INFO] GEMINI_API_KEY configurada`, 'cyan');
 
-    // 2. FFmpeg Local
-    log('\n⚙️  Verificando Binários Locais:', 'yellow');
+    // 2. FFmpeg Local (Optional now that we use Rendi Cloud FFmpeg)
+    log('\n⚙️  Verificando Binários Locais (Opcional):', 'yellow');
     try {
         const cmd = process.env.FFMPEG_PATH ? `"${process.env.FFMPEG_PATH}" -version` : 'ffmpeg -version';
         const ffmpegOutput = execSync(cmd).toString().split('\n')[0];
-        log(`  [OK] FFmpeg Instalado: ${ffmpegOutput.substring(0, 30)}...`, 'green');
+        log(`  [OK] FFmpeg Instalado (Backup Local): ${ffmpegOutput.substring(0, 30)}...`, 'green');
     } catch (e) {
-        log(`  [FALHA] FFmpeg não encontrado no PATH nem no FFMPEG_PATH.`, 'red');
-        allPassed = false;
+        log(`  [INFO] FFmpeg local não encontrado. Pipeline utilizará Rendi Cloud nativamente.`, 'cyan');
     }
 
     // 3. Diretórios de Trabalho
@@ -124,6 +124,22 @@ export async function runHealthCheck() {
             const { listVoices } = await import('../tools/elevenlabs-client.js');
             const v = await listVoices();
             if (!v || v.length === 0) throw new Error('Nenhuma voz encontrada');
+        });
+    }
+
+    // Rendi Dev (Cloud FFmpeg)
+    if (process.env.API_KEY_RENDI_DEV) {
+        allPassed &= await testPing('Rendi Dev API (FFmpeg Cloud)', async () => {
+            const { default: axios } = await import('axios');
+            try {
+                await axios.get('https://api.rendi.dev/v1/commands/a25a786d-86ea-4f77-bc25-19359754d2fa', {
+                    headers: { 'X-API-KEY': process.env.API_KEY_RENDI_DEV }
+                });
+            } catch (err) {
+                if (err.response?.status !== 404 && err.response?.status !== 200) {
+                    throw new Error(`Rendi API auth/connection failed: ${err.message}`);
+                }
+            }
         });
     }
 
