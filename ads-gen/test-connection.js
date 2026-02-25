@@ -1,4 +1,4 @@
-import { testConnection } from './src/db/supabase.js';
+import { testConnection } from './src/infrastructure/database/supabase.js';
 import { logger } from './src/utils/logger.js';
 
 async function run() {

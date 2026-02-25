@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { logger } from './src/utils/logger.js';
-import { buscarUltimoBriefing, listarCenas, listarAvatares, salvarVideo, atualizarStatusVideo, logFase } from './src/db/dal.js';
+import { buscarUltimoBriefing, listarCenas, listarAvatares, salvarVideo, atualizarStatusVideo, logFase } from './src/infrastructure/database/dal.js';
 import { animateImage, animateText } from './src/tools/video-animator.js';
 import { selectVideo } from './src/tools/video-selector.js';
-import { uploadVideo } from './src/tools/storage-uploader.js';
+import { uploadVideo } from './src/infrastructure/storage/storage-uploader.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });
 

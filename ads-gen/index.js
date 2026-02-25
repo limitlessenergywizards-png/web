@@ -5,10 +5,10 @@ import fs from 'fs-extra';
 import dotenv from 'dotenv';
 import path from 'path';
 import { logger } from './src/utils/logger.js';
-import creativePipeline from './src/pipelines/creative-pipeline.js';
-import batchProcessor from './src/pipelines/batch-processor.js';
-import { criarProjeto, criarBriefing, buscarProjeto, buscarBriefing, listarUsagePorProjeto } from './src/db/dal.js';
-import { runAuthServer } from './src/tools/drive-uploader.js';
+import creativePipeline from './src/modules/production/pipeline.js';
+import batchProcessor from './src/modules/production/batch-processor.js';
+import { criarProjeto, criarBriefing, buscarProjeto, buscarBriefing, listarUsagePorProjeto } from './src/infrastructure/database/dal.js';
+import { runAuthServer } from './src/infrastructure/storage/drive-uploader.js';
 import { validateEnv } from './src/utils/env-validator.js';
 
 // ... (other imports remain, just updating the destructuring at the top and the commands at the bottom)
@@ -51,6 +51,8 @@ async function printFinalReport(briefingId, deliveryResult) {
     logger.info(`══════════════════════════════════════\n`);
 }
 
+import { processCommand } from './src/cli/commands/process.js';
+
 // ─── Command: Process single copy file ───
 program
     .command('process')
@@ -58,38 +60,7 @@ program
     .requiredOption('--copy <path>', 'Caminho do arquivo .txt com a copy')
     .requiredOption('--projeto <name>', 'Nome do projeto')
     .option('--modo <mode>', 'Modo de execução (auto/semi-auto)', 'auto')
-    .action(async (options) => {
-        try {
-            if (!fs.existsSync(options.copy)) {
-                logger.error(`❌ Arquivo de copy não encontrado: ${options.copy}`);
-                process.exit(1);
-            }
-
-            const copyTexto = await fs.readFile(options.copy, 'utf-8');
-
-            const projetoId = await criarProjeto({
-                nome: options.projeto,
-                produto: 'Video Pipeline Exemplo',
-                status: 'ativo'
-            });
-
-            const briefingId = await criarBriefing({
-                projeto_id: projetoId,
-                copy_original: copyTexto,
-                status: 'novo'
-            });
-
-            const { success, delivery, error } = await creativePipeline.run(briefingId, { modo: options.modo });
-
-            if (success) {
-                await printFinalReport(briefingId, delivery);
-            } else {
-                logger.error(`❌ Falha no pipeline: ${error}`);
-            }
-        } catch (err) {
-            logger.error(`❌ Erro Fatal: ${err.message}`);
-        }
-    });
+    .action(processCommand);
 
 // ─── Command: Batch Process ───
 program

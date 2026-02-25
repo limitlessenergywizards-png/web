@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
 import path from 'path';
 import { logger } from './logger.js';
-import { logApiUsage } from '../db/dal.js';
+import { logApiUsage } from '../infrastructure/database/dal.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });
 

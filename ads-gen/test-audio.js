@@ -7,10 +7,10 @@ import path from 'path';
 import os from 'os';
 import fs from 'fs-extra';
 import { logger } from './src/utils/logger.js';
-import { buscarUltimoBriefing, listarCenas, salvarAudio } from './src/db/dal.js';
+import { buscarUltimoBriefing, listarCenas, salvarAudio } from './src/infrastructure/database/dal.js';
 import { generateSpeech, listVoices } from './src/tools/elevenlabs-client.js';
 import { normalizeVolume, getAudioDuration } from './src/tools/audio-processor.js';
-import { uploadAudio, withTempFile } from './src/tools/storage-uploader.js';
+import { uploadAudio, withTempFile } from './src/infrastructure/storage/storage-uploader.js';
 import { calcularSincronizacaoBatch } from './src/tools/sync-calculator.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });

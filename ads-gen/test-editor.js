@@ -16,8 +16,8 @@ import {
     applyEffect, exportFinal, getMediaDuration
 } from './src/tools/video-editor.js';
 import { concatenateScenes, assembleCreative } from './src/tools/video-concatenator.js';
-import { uploadBuffer } from './src/tools/storage-uploader.js';
-import { salvarCriativo, buscarUltimoBriefing, listarCenas } from './src/db/dal.js';
+import { uploadBuffer } from './src/infrastructure/storage/storage-uploader.js';
+import { salvarCriativo, buscarUltimoBriefing, listarCenas } from './src/infrastructure/database/dal.js';
 import { calcularSincronizacaoBatch } from './src/tools/sync-calculator.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });

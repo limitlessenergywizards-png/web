@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { logger } from './src/utils/logger.js';
-import { buscarUltimoBriefing, listarCenas } from './src/db/dal.js';
+import { buscarUltimoBriefing, listarCenas } from './src/infrastructure/database/dal.js';
 import { gerarVideoTexto, gerarVideosPorBriefing } from './src/tools/video-generator.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });

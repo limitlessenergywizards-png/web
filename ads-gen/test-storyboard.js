@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { logger } from './src/utils/logger.js';
-import { buscarUltimoBriefing, listarCenas } from './src/db/dal.js';
+import { buscarUltimoBriefing, listarCenas } from './src/infrastructure/database/dal.js';
 import { storyboardAgent } from './src/agents/storyboard.agent.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });

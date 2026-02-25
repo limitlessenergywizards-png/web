@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { execSync } from 'child_process';
 import fs from 'fs-extra';
-import { supabaseAdmin } from '../db/supabase.js';
+import { supabaseAdmin } from '../infrastructure/database/supabase.js';
 
 dotenv.config({ path: path.join(process.cwd(), 'config', '.env') });
 

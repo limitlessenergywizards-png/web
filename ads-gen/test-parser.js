@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { logger } from './src/utils/logger.js';
-import { criarProjeto, criarBriefing, listarCenas, buscarBriefing } from './src/db/dal.js';
+import { criarProjeto, criarBriefing, listarCenas, buscarBriefing } from './src/infrastructure/database/dal.js';
 import { parseCopy } from './src/tools/copy-parser.js';
 
 async function runTest() {

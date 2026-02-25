@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '../db/supabase.js';
+import { supabaseAdmin } from '../infrastructure/database/supabase.js';
 
 function formatDuration(ms) {
     if (ms < 1000) return `${ms}ms`;
